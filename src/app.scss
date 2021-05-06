@@ -1,0 +1,22 @@
+.logo {
+  width: 233px;
+  height: 105px;
+  position: relative;
+  & > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    p {
+      transform: rotate(90deg);
+      margin: 0;
+      padding: 0;
+      line-height: 28px;
+      height: 37px;
+    }
+  }
+  .logo-smile {
+    position: absolute;
+    font-size: 39px;
+    color: white;
+  }
+}
