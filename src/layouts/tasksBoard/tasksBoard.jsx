@@ -70,7 +70,7 @@ export const TasksBoard = () => {
   const AddNewStatuses = () => {
     const projs = [...state];
     const id = uuid();
-    projs.push({ ...structProgressStatus, id });
+    projs.push({ ...structProgressStatus, id: `statuses-${id}` });
     setState(projs);
     setIsAbleAddNew(false);
   };
@@ -89,35 +89,38 @@ export const TasksBoard = () => {
   const getList = (id) => state.find((el) => el.id === id).tasks;
 
   const onDragEnd = (result) => {
+    // console.log(result);
     const { source, destination } = result;
-
     // dropped outside the list
     if (!destination) {
       return;
     }
-
-    if (source.droppableId === destination.droppableId) {
-      const items = reorder(getList(source.droppableId), source.index, destination.index);
-      const updatedProject = produce(state, (draftProj) => {
-        const proj = draftProj.find((el) => el.id === source.droppableId);
-        proj.tasks = items;
-      });
-      setState(updatedProject);
-    } else {
-      const result = move(
-        getList(source.droppableId),
-        getList(destination.droppableId),
-        source,
-        destination,
-      );
-      const updatedProject = produce(state, (draftProj) => {
-        for (let proj of draftProj) {
-          if (result[proj.id]) {
-            proj.tasks = result[proj.id];
+    if (destination.droppableId !== "statuses") {
+      if (source.droppableId === destination.droppableId) {
+        const items = reorder(getList(source.droppableId), source.index, destination.index);
+        const updatedProject = produce(state, (draftProj) => {
+          const proj = draftProj.find((el) => el.id === source.droppableId);
+          proj.tasks = items;
+        });
+        setState(updatedProject);
+      } else {
+        const result = move(
+          getList(source.droppableId),
+          getList(destination.droppableId),
+          source,
+          destination,
+        );
+        const updatedProject = produce(state, (draftProj) => {
+          for (let proj of draftProj) {
+            if (result[proj.id]) {
+              proj.tasks = result[proj.id];
+            }
           }
-        }
-      });
-      // console.log(updatedProject);
+        });
+        setState(updatedProject);
+      }
+    } else {
+      const updatedProject = reorder(state, source.index, destination.index);
       setState(updatedProject);
     }
   };
@@ -128,6 +131,18 @@ export const TasksBoard = () => {
       proj.title = target.value;
     });
     setState(updatedProject);
+  };
+  const handleOnKeyDownTitle = ({ keyCode }, id) => {
+    if (keyCode === 13) {
+      const updatedProject = produce(state, (draftProj) => {
+        const proj = draftProj.find((el) => el.id === id);
+        if (proj.title) {
+          proj.confirmed = true;
+        }
+      });
+      setState(updatedProject);
+      setIsAbleAddNew(true);
+    }
   };
 
   const handleOnConfirmStatuses = (id) => {
@@ -170,66 +185,110 @@ export const TasksBoard = () => {
       </div>
       <div className="projects-tasks-board">
         <DragDropContext className="dnd-form" onDragEnd={onDragEnd}>
-          {state.map((project) => {
-            return (
-              <Droppable key={project.id} droppableId={project.id}>
-                {(provided, snapshot) => (
-                  <div className="project--tasks">
-                    <div className="project-tasks--wrapper">
-                      <div className="project--tasks-header">
-                        {project.confirmed ? (
-                          <p>{project.title}</p>
-                        ) : (
-                          <div>
-                            <input onChange={(e) => handleOnChangeTitle(e, project.id)} />
-                            <div>
-                              <img
-                                src={confirmSvg}
-                                alt="confirm"
-                                onClick={() => handleOnConfirmStatuses(project.id)}
-                              />
-                              <img
-                                src={candelSvg}
-                                alt="delete"
-                                onClick={() => handleOnDeleteStatuses(project.id)}
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className="project--task"
-                        ref={provided.innerRef}
-                        style={getListStyle(snapshot.isDraggingOver)}
-                      >
-                        {project.tasks.map((item, index) => (
-                          <div style={{ height: 50 }} key={item.id}>
-                            <Draggable draggableId={item.id} index={index}>
-                              {(provided, snapshot) => (
-                                <Task provided={provided} snapshot={snapshot} content={item.id} />
+          <Droppable droppableId="statuses" type="STATUSES">
+            {(provided, _) => (
+              <div ref={provided.innerRef}>
+                {state.map((statuses, index) => {
+                  return (
+                    <Draggable key={statuses.id} draggableId={statuses.id} index={index}>
+                      {(provided, _) => (
+                        <div
+                          className="project--tasks"
+                          key={statuses.id}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                        >
+                          <div className="project-tasks--wrapper">
+                            <div className="project--tasks-header" {...provided.dragHandleProps}>
+                              {statuses.confirmed ? (
+                                <p>{statuses.title}</p>
+                              ) : (
+                                <div>
+                                  <input
+                                    onKeyDown={(e) => handleOnKeyDownTitle(e, statuses.id)}
+                                    onChange={(e) => handleOnChangeTitle(e, statuses.id)}
+                                  />
+                                  <div>
+                                    <img
+                                      src={confirmSvg}
+                                      alt="confirm"
+                                      onClick={() => handleOnConfirmStatuses(statuses.id)}
+                                    />
+                                    <img
+                                      src={candelSvg}
+                                      alt="delete"
+                                      onClick={() => handleOnDeleteStatuses(statuses.id)}
+                                    />
+                                  </div>
+                                </div>
                               )}
-                            </Draggable>
+                            </div>
+                            <Droppable droppableId={statuses.id}>
+                              {(provided, snapshot) => (
+                                <div
+                                  className="project--task"
+                                  ref={provided.innerRef}
+                                  style={getListStyle(snapshot.isDraggingOver)}
+                                >
+                                  {statuses.tasks.map((item, index) => (
+                                    <div style={{ height: 50 }} key={item.id}>
+                                      <Draggable draggableId={item.id} index={index}>
+                                        {(provided, snapshot) => (
+                                          <Task
+                                            provided={provided}
+                                            snapshot={snapshot}
+                                            content={item.id}
+                                          />
+                                        )}
+                                      </Draggable>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </Droppable>
+                            <button
+                              disabled={!statuses.confirmed}
+                              onClick={() => AddNewTask(statuses.id)}
+                            >
+                              create task
+                            </button>
                           </div>
-                        ))}
-                      </div>
-                      <button disabled={!project.confirmed} onClick={() => AddNewTask(project.id)}>
-                        create task
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </Droppable>
-            );
-          })}
-          <button
-            disabled={!isAbleAddNew}
-            className="projects--add-statuses"
-            onClick={AddNewStatuses}
-          >
-            +
-          </button>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                <button
+                  disabled={!isAbleAddNew}
+                  className="projects--add-statuses"
+                  onClick={AddNewStatuses}
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </Droppable>
         </DragDropContext>
       </div>
     </div>
   );
 };
+
+// <Droppable droppableId="statuses" type="STATUSES">
+//   {(provided, _) => (
+//     <div ref={provided.innerRef}>
+//       {this.state.questions.map((question, index) => (
+//         <Draggable key={question.id} draggableId={question.id} index={index}>
+//           {(provided, _) => (
+//             <div
+//               ref={provided.innerRef}
+//               {...provided.draggableProps}
+//             >
+
+//             </div>
+//           )}
+//         </Draggable>
+//       ))}
+//     </div>
+//   )}
+// </Droppable>
