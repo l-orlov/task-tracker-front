@@ -1,6 +1,8 @@
 .logo {
-  width: 233px;
-  height: 105px;
+  // width: 233px;
+  & > p {
+    font-size: 67px;
+  }
   position: relative;
   & > div {
     display: flex;
@@ -12,11 +14,9 @@
       padding: 0;
       line-height: 28px;
       height: 37px;
+      position: absolute;
+      font-size: 39px;
+      color: white;
     }
-  }
-  .logo-smile {
-    position: absolute;
-    font-size: 39px;
-    color: white;
   }
 }
