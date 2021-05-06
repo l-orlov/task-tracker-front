@@ -29,11 +29,11 @@ $color-lightgray: rgb(244, 245, 247);
   }
 
   .projects-tasks-board {
+    overflow-x: scroll;
     & > div {
       width: 100%;
       height: 100%;
       display: flex;
-      overflow-x: scroll;
       .project--tasks {
         min-width: 250px;
         width: 250px;
