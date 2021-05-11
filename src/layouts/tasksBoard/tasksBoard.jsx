@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import produce from "immer";
@@ -24,11 +24,6 @@ const structProgressStatus = {
   title: "",
   tasks: [],
 };
-
-const navigation = [
-  { title: "backlog", id: "backlog" },
-  { title: "board", id: "board" },
-];
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -57,11 +52,28 @@ const getListStyle = (isDraggingOver) => ({
   // background: isDraggingOver ? "lightblue" : "lightgrey",
 });
 
-export const TasksBoard = () => {
+export const TasksBoard = ({ setNavigation }) => {
+  const statusesRef = useRef(null);
   const { id } = useParams();
-  // const [nav, setNav] = useState(id);
   const [state, setState] = useState([]);
   const [isAbleAddNew, setIsAbleAddNew] = useState(true);
+  const [position, setPostion] = useState(0);
+
+  const ScrollListener = () => {
+    setPostion(statusesRef.current.scrollLeft);
+  };
+
+  useEffect(() => {
+    setNavigation([
+      { title: "board", id: "board", path: `/projects/${id}/board` },
+      // { title: "project settings", id: "settings", path: `/projects/${id}/settings` },
+    ]);
+  }, [setNavigation, id]);
+
+  useEffect(() => {
+    statusesRef.current.addEventListener("scroll", ScrollListener);
+    return () => statusesRef.current.removeEventListener("scroll", ScrollListener);
+  }, []);
 
   const AddNewStatuses = () => {
     const projs = [...state];
@@ -85,9 +97,7 @@ export const TasksBoard = () => {
   const getList = (id) => state.find((el) => el.id === id).tasks;
 
   const onDragEnd = (result) => {
-    // console.log(result);
     const { source, destination } = result;
-    // dropped outside the list
     if (!destination) {
       return;
     }
@@ -162,40 +172,24 @@ export const TasksBoard = () => {
   };
 
   return (
-    <div className="projects">
-      <div className="projects-navigation">
-        <ul>
-          {navigation.map((el) => (
-            <li key={el.id}>
-              <NavLink
-                to={`/tasks/${el.id}`}
-                className="navigation__link"
-                activeClassName="navigation__link--active"
-              >
-                <div>
-                  <span className="navigation__text">{el.title}</span>
-                </div>
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="projects-tasks-board">
-        <DragDropContext className="dnd-form" onDragEnd={onDragEnd}>
-          <Droppable droppableId="statuses" type="STATUSES" direction="horizontal">
-            {(provided, _) => (
-              <div ref={provided.innerRef}>
+    <div className="board">
+      <DragDropContext className="dnd-form" onDragEnd={onDragEnd}>
+        <Droppable droppableId="statuses" type="STATUSES" direction="horizontal">
+          {(providedStatuses, _) => (
+            <div ref={providedStatuses.innerRef}>
+              <div className={`sticky-shadow ${position >= 10 ? "show" : "hidden"}`}></div>
+              <div className="board-statuses" ref={statusesRef}>
                 {state.map((statuses, index) => (
                   <Draggable key={statuses.id} draggableId={statuses.id} index={index}>
                     {(provided, _) => (
                       <div
-                        className="project--tasks"
+                        className="board--tasks"
                         key={statuses.id}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
-                        <div className="project-tasks--wrapper">
-                          <div className="project--tasks-header">
+                        <div className="board-tasks--wrapper">
+                          <div className="board--tasks-header">
                             {statuses.confirmed ? (
                               <p {...provided.dragHandleProps}>{statuses.title}</p>
                             ) : (
@@ -222,7 +216,7 @@ export const TasksBoard = () => {
                           <Droppable droppableId={statuses.id}>
                             {(provided, snapshot) => (
                               <div
-                                className="project--task"
+                                className="board--task"
                                 ref={provided.innerRef}
                                 style={getListStyle(snapshot.isDraggingOver)}
                               >
@@ -253,18 +247,19 @@ export const TasksBoard = () => {
                     )}
                   </Draggable>
                 ))}
-                <button
-                  disabled={!isAbleAddNew}
-                  className="projects--add-statuses"
-                  onClick={AddNewStatuses}
-                >
-                  +
-                </button>
               </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </div>
+
+              <button
+                disabled={!isAbleAddNew}
+                className="board--add-statuses"
+                onClick={AddNewStatuses}
+              >
+                +
+              </button>
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 };

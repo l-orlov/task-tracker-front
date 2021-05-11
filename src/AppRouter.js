@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 
 import { Authentication } from "./layouts/authentication/authentication";
-import { TasksBoard } from "./layouts/tasksBoard/tasksBoard";
+import { App } from "./layouts/App";
 
 import { ProtectedRoute } from "./components/protectedRoute/protectedRoute";
 
 import "./app.scss";
 
-function App() {
+function AppRouter() {
   const history = useHistory();
   const [isAuth, setIsAuth] = useState(true);
 
@@ -17,13 +17,11 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <Switch>
-        <Route exact path="/" component={Authentication} />
-        <ProtectedRoute path="/tasks/:id" isAuth={isAuth} component={TasksBoard} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route exact path="/" component={Authentication} />
+      <ProtectedRoute path="/projects" isAuth={isAuth} component={App} />
+    </Switch>
   );
 }
 
-export default App;
+export default AppRouter;

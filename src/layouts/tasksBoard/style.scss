@@ -1,123 +1,136 @@
 $color-lightgray: rgb(244, 245, 247);
 
-.projects {
+.board {
+  overflow-x: scroll;
   display: flex;
-  width: 100%;
+  min-width: 800px;
+  padding: 0 10px;
   height: 100%;
   box-sizing: border-box;
-  overflow: hidden;
 
-  .projects-navigation {
-    width: 150px;
-    box-sizing: border-box;
-    ul {
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      \box-sizing: border-box;
-      li {
-        box-sizing: border-box;
-        padding: 10px 5px;
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        list-style-type: none;
-      }
+  .sticky-shadow {
+    &.show {
+      background: rgb(255, 255, 255);
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 0.2s ease 0s;
+      z-index: 90;
+    }
+    &.hidden {
+      background: rgb(255, 255, 255);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease 0s;
+      z-index: 1;
+    }
+    position: sticky;
+    width: 6px;
+    min-width: 6px;
+    box-shadow: rgb(255 255 255) 0px 80px 0px, rgb(9 30 66 / 8%) 5px -2px 7px;
+    // background: rebeccapurple;
+  }
+  .board-statuses {
+    height: 100%;
+    display: flex;
+    overflow: auto;
+    padding-left: 10px;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
-
-  .projects-tasks-board {
-    overflow-x: scroll;
-    & > div {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      .project--tasks {
-        min-width: 250px;
-        width: 250px;
-        margin-right: 25px;
-        .project-tasks--wrapper {
-          background-color: $color-lightgray;
-          min-height: 150px;
-          padding: 5px;
-          .project--task {
-            min-height: 50px;
-            border-radius: 2px;
-            & > div {
-              display: flex;
-              justify-content: center;
-              .task {
-                &:hover {
-                  background-color: $color-lightgray;
-                  box-shadow: 0px 0px 2px #585858;
-                }
-                padding: 5px 10px;
-                font-size: 12px;
-                margin-bottom: 5px;
-                width: 240px;
-                background: white;
-                border-radius: 2px;
+  & > div {
+    width: 100%;
+    // height: 100%;
+    height: fit-content;
+    display: flex;
+    .board--tasks {
+      min-width: 250px;
+      width: 250px;
+      margin-right: 25px;
+      .board-tasks--wrapper {
+        display: flex;
+        flex-direction: column;
+        background-color: $color-lightgray;
+        min-height: 150px;
+        padding: 5px;
+        .board--task {
+          min-height: 50px;
+          border-radius: 2px;
+          & > div {
+            display: flex;
+            justify-content: center;
+            .task {
+              &:hover {
+                background-color: $color-lightgray;
+                box-shadow: 0px 0px 2px #585858;
               }
+              padding: 5px 10px;
+              font-size: 12px;
+              margin-bottom: 5px;
+              width: 240px;
+              background: white;
+              border-radius: 2px;
             }
           }
-          & > button {
-            cursor: pointer;
-            margin-top: 50px;
-            height: 32px;
-            background: white;
-            border: 1px solid #585858;
-            outline: none;
-            border-radius: 2px;
-          }
+        }
+        & > button {
+          // width: ;
+          cursor: pointer;
+          margin-top: 50px;
+          height: 32px;
+          background: white;
+          border: 1px solid #585858;
+          outline: none;
+          border-radius: 2px;
         }
       }
-      .project--tasks-header {
-        height: 50px;
-        // display: flex;
-        // justify-content: center;
-        margin-top: 10px;
-        // border
-        // align-items: center;
-        p {
-          font-size: 19px;
-          font-weight: bold;
+    }
+    .board--tasks-header {
+      height: 50px;
+      // display: flex;
+      // justify-content: center;
+      margin-top: 10px;
+      // border
+      // align-items: center;
+      p {
+        font-size: 19px;
+        font-weight: bold;
+      }
+      & > div {
+        display: flex;
+        justify-content: space-between;
+        input {
+          width: 170px;
+          height: 28px;
+          padding: 5px;
+          font-size: 12px;
+          outline: none;
+          box-sizing: border-box;
         }
         & > div {
+          margin-right: 10px;
+          width: 60px;
           display: flex;
-          justify-content: space-between;
-          input {
-            width: 170px;
-            height: 28px;
-            padding: 5px;
-            font-size: 12px;
-            outline: none;
-            box-sizing: border-box;
-          }
-          & > div {
-            margin-right: 10px;
-            width: 60px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            img {
-              cursor: pointer;
-              width: 12px;
-              height: 12px;
-            }
+          justify-content: space-around;
+          align-items: center;
+          img {
+            cursor: pointer;
+            width: 12px;
+            height: 12px;
           }
         }
       }
-      .projects--add-statuses {
-        width: 24px;
-        height: 24px;
-        font-size: 20px;
-        background: $color-lightgray;
-        border: none;
-        border-radius: 2px;
-        cursor: pointer;
-      }
+    }
+    .board--add-statuses {
+      width: 24px;
+      height: 24px;
+      font-size: 20px;
+      background: $color-lightgray;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
     }
   }
 }

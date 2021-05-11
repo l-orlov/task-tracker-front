@@ -2,14 +2,14 @@ import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
 
-import App from "./App";
+import AppRouter from "./AppRouter";
 import reportWebVitals from "./reportWebVitals";
 
 import "./styles/styles.scss";
 
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <AppRouter />
   </BrowserRouter>,
   document.getElementById("root"),
 );

@@ -1,22 +1,53 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
-import "./authentication.scss";
+import { Input } from "../../components/";
+
 import logoSvg from "../../logo.svg";
+
+import "./authentication.scss";
+
 const defaultValues = {
   password: "",
-  login: "",
+  email: "",
+  firstName: "",
+  lastName: "",
 };
+
+const loginFormFields = [
+  { title: "Почта", name: "email", type: "text" },
+  {
+    title: "Пароль",
+    name: "password",
+    type: "password",
+  },
+];
+
+const registrationFormFields = [
+  { title: "Почти", name: "email", type: "text" },
+  { title: "Имя", name: "firstName", type: "text" },
+  { title: "Фамилия", name: "lastName", type: "text" },
+  { title: "Пароль", name: "password", type: "password" },
+];
 
 export const Authentication = () => {
   const history = useHistory();
-  const { register, handleSubmit } = useForm({ defaultValues });
+  const [isSignIn, setIsSignIn] = useState(true);
+  const { register, handleSubmit, reset } = useForm({ defaultValues });
+
+  const memoizedArrayFields = isSignIn ? loginFormFields : registrationFormFields;
 
   const handleOnSignIn = (data) => {
-    history.push("/tasks/board");
+    setIsSignIn(true);
+    console.log(data);
+    history.push("/projects");
   };
-  const handleonSignUp = () => {};
+  const handleonSignUp = (data) => {
+    setIsSignIn(!isSignIn);
+    !isSignIn && console.log(data);
+    reset();
+  };
 
   return (
     <div className="authentication">
@@ -37,20 +68,22 @@ export const Authentication = () => {
         </div>
         <div className="authentication-form">
           <form>
-            <label className="authentication-password" htmlFor="password">
-              <p>Пароль</p>
-              <input {...register("password")} type="text" id="password" />
-            </label>
-            <label className="authentication-login" htmlFor="login">
-              <p>Логин</p>
-              <input {...register("login")} type="password" id="логин" />
-            </label>
+            {memoizedArrayFields.map((el) => (
+              <Input
+                key={el.name}
+                className="authentication"
+                register={register}
+                title={el.title}
+                name={el.name}
+                type={el.type}
+              />
+            ))}
             <div className="authentication-buttongs">
               <button className="ds-button-shadow" onClick={handleSubmit(handleOnSignIn)}>
                 Войти
               </button>
-              <button className="ds-button-shadow" onClick={handleonSignUp}>
-                Регистрация
+              <button className="ds-button-shadow" onClick={handleSubmit(handleonSignUp)}>
+                {isSignIn ? "Регистрация" : "Зарегистрироваться"}
               </button>
             </div>
           </form>
