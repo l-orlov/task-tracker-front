@@ -10,10 +10,12 @@ function* authorization(action) {
   console.log(action);
   yield put(authorizationStart());
   try {
-    const response = yield call(() => instance.post(`${REACT_APP_BACKEND_URL}/auth/sign-in`), {
-      email: action.payload.email,
-      password: action.payload.password,
-    });
+    const response = yield call(() =>
+      instance.post(`${REACT_APP_BACKEND_URL}/auth/sign-in`, {
+        email: action.payload.email,
+        password: action.payload.password,
+      }),
+    );
     yield put(authorizationSuccess(response.data));
   } catch (error) {
     console.log(error);
