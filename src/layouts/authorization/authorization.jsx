@@ -1,16 +1,18 @@
-import React, { useState, useMemo } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
+// import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 import { Input } from "../../components/";
+import { authorization } from "../../model/authorization/actions";
 
 import logoSvg from "../../logo.svg";
 
-import "./authentication.scss";
+import "./authorization.scss";
 
 const defaultValues = {
-  password: "",
-  email: "",
+  password: "123",
+  email: "lev.orlov.5404@gmail.comab",
   firstName: "",
   lastName: "",
 };
@@ -31,8 +33,9 @@ const registrationFormFields = [
   { title: "Пароль", name: "password", type: "password" },
 ];
 
-export const Authentication = () => {
-  const history = useHistory();
+export const Authorization = () => {
+  // const history = useHistory();
+  const dispatch = useDispatch();
   const [isSignIn, setIsSignIn] = useState(true);
   const { register, handleSubmit, reset } = useForm({ defaultValues });
 
@@ -41,7 +44,8 @@ export const Authentication = () => {
   const handleOnSignIn = (data) => {
     setIsSignIn(true);
     console.log(data);
-    history.push("/projects");
+    dispatch(authorization(data));
+    // history.push("/projects");
   };
   const handleonSignUp = (data) => {
     setIsSignIn(!isSignIn);
@@ -50,11 +54,11 @@ export const Authentication = () => {
   };
 
   return (
-    <div className="authentication">
-      <div className="authentication-wrapper">
+    <div className="authorization">
+      <div className="authorization-wrapper">
         <div className="logo">
           <div>
-            <img src={logoSvg} />
+            <img src={logoSvg} alt="" />
             <p className="logo-smile">: )</p>
           </div>
 
@@ -66,19 +70,19 @@ export const Authentication = () => {
             Task-Tracker
           </p>
         </div>
-        <div className="authentication-form">
+        <div className="authorization-form">
           <form>
             {memoizedArrayFields.map((el) => (
               <Input
                 key={el.name}
-                className="authentication"
+                className="authorization"
                 register={register}
                 title={el.title}
                 name={el.name}
                 type={el.type}
               />
             ))}
-            <div className="authentication-buttongs">
+            <div className="authorization-buttongs">
               <button className="ds-button-shadow" onClick={handleSubmit(handleOnSignIn)}>
                 Войти
               </button>

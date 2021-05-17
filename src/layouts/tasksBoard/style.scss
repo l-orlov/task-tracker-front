@@ -3,7 +3,7 @@ $color-lightgray: rgb(244, 245, 247);
 .board {
   overflow-x: scroll;
   display: flex;
-  min-width: 800px;
+  width: 1000px;
   padding: 0 10px;
   height: 100%;
   box-sizing: border-box;
@@ -40,97 +40,107 @@ $color-lightgray: rgb(244, 245, 247);
       display: none;
     }
   }
-  & > div {
-    width: 100%;
-    // height: 100%;
-    height: fit-content;
-    display: flex;
-    .board--tasks {
-      min-width: 250px;
-      width: 250px;
-      margin-right: 25px;
-      .board-tasks--wrapper {
-        display: flex;
-        flex-direction: column;
-        background-color: $color-lightgray;
-        min-height: 150px;
-        padding: 5px;
-        .board--task {
-          min-height: 50px;
-          border-radius: 2px;
-          & > div {
-            display: flex;
-            justify-content: center;
-            .task {
-              &:hover {
-                background-color: $color-lightgray;
-                box-shadow: 0px 0px 2px #585858;
+  .board-content {
+    & > div {
+      width: 100%;
+      // height: 100%;
+      height: fit-content;
+      display: flex;
+      .board--tasks {
+        min-width: 250px;
+        width: 250px;
+        margin-right: 25px;
+        .board-tasks--wrapper {
+          display: flex;
+          flex-direction: column;
+          background-color: $color-lightgray;
+          min-height: 150px;
+          padding: 5px;
+          .board--task {
+            min-height: 50px;
+            border-radius: 2px;
+            & > div {
+              display: flex;
+              justify-content: center;
+              .task {
+                &:hover {
+                  background-color: $color-lightgray;
+                  box-shadow: 0px 0px 2px #585858;
+                }
+                padding: 5px 10px;
+                font-size: 12px;
+                margin-bottom: 5px;
+                width: 240px;
+                background: white;
+                border-radius: 2px;
               }
-              padding: 5px 10px;
-              font-size: 12px;
-              margin-bottom: 5px;
-              width: 240px;
-              background: white;
-              border-radius: 2px;
+            }
+          }
+          & > button {
+            // width: ;
+            cursor: pointer;
+            margin-top: 50px;
+            height: 32px;
+            background: white;
+            border: 1px solid #585858;
+            outline: none;
+            border-radius: 2px;
+          }
+        }
+      }
+      .board--tasks-header {
+        height: 50px;
+        // display: flex;
+        // justify-content: center;
+        margin-top: 10px;
+        // border
+        // align-items: center;
+
+        & > div {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          & > p {
+            font-size: 19px;
+            font-weight: bold;
+          }
+          & > img {
+            cursor: pointer;
+            width: 15px;
+            height: 15px;
+            margin-right: 10px;
+          }
+          input {
+            width: 170px;
+            height: 28px;
+            padding: 5px;
+            font-size: 12px;
+            outline: none;
+            box-sizing: border-box;
+          }
+          & > div {
+            margin-right: 10px;
+            width: 60px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            img {
+              cursor: pointer;
+              width: 12px;
+              height: 12px;
             }
           }
         }
-        & > button {
-          // width: ;
-          cursor: pointer;
-          margin-top: 50px;
-          height: 32px;
-          background: white;
-          border: 1px solid #585858;
-          outline: none;
-          border-radius: 2px;
-        }
       }
-    }
-    .board--tasks-header {
-      height: 50px;
-      // display: flex;
-      // justify-content: center;
-      margin-top: 10px;
-      // border
-      // align-items: center;
-      p {
-        font-size: 19px;
-        font-weight: bold;
+      .board--add-statuses {
+        width: 24px;
+        height: 24px;
+        font-size: 20px;
+        background: $color-lightgray;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
       }
-      & > div {
-        display: flex;
-        justify-content: space-between;
-        input {
-          width: 170px;
-          height: 28px;
-          padding: 5px;
-          font-size: 12px;
-          outline: none;
-          box-sizing: border-box;
-        }
-        & > div {
-          margin-right: 10px;
-          width: 60px;
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          img {
-            cursor: pointer;
-            width: 12px;
-            height: 12px;
-          }
-        }
-      }
-    }
-    .board--add-statuses {
-      width: 24px;
-      height: 24px;
-      font-size: 20px;
-      background: $color-lightgray;
-      border: none;
-      border-radius: 2px;
-      cursor: pointer;
     }
   }
 }

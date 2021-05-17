@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import produce from "immer";
 import { v4 as uuid } from "uuid";
@@ -9,6 +8,10 @@ import { Task } from "./task/task";
 
 import confirmSvg from "./svg/confirm.svg";
 import candelSvg from "./svg/cancel.svg";
+import settingsSvg from "./svg/settings.svg";
+
+import { Portal } from "../../components/portal/";
+// import
 
 import "./style.scss";
 
@@ -53,11 +56,13 @@ const getListStyle = (isDraggingOver) => ({
 });
 
 export const TasksBoard = ({ setNavigation }) => {
+  // const history = useHistory();
   const statusesRef = useRef(null);
   const { id } = useParams();
   const [state, setState] = useState([]);
   const [isAbleAddNew, setIsAbleAddNew] = useState(true);
   const [position, setPostion] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
 
   const ScrollListener = () => {
     setPostion(statusesRef.current.scrollLeft);
@@ -72,7 +77,9 @@ export const TasksBoard = ({ setNavigation }) => {
 
   useEffect(() => {
     statusesRef.current.addEventListener("scroll", ScrollListener);
-    return () => statusesRef.current.removeEventListener("scroll", ScrollListener);
+    console.log("hello");
+    return () =>
+      statusesRef.current && statusesRef.current.removeEventListener("scroll", ScrollListener);
   }, []);
 
   const AddNewStatuses = () => {
@@ -171,95 +178,114 @@ export const TasksBoard = ({ setNavigation }) => {
     setIsAbleAddNew(true);
   };
 
+  const handleOnClickSettings = (id) => {
+    setShowSettings(true);
+  };
+
   return (
-    <div className="board">
-      <DragDropContext className="dnd-form" onDragEnd={onDragEnd}>
-        <Droppable droppableId="statuses" type="STATUSES" direction="horizontal">
-          {(providedStatuses, _) => (
-            <div ref={providedStatuses.innerRef}>
-              <div className={`sticky-shadow ${position >= 10 ? "show" : "hidden"}`}></div>
-              <div className="board-statuses" ref={statusesRef}>
-                {state.map((statuses, index) => (
-                  <Draggable key={statuses.id} draggableId={statuses.id} index={index}>
-                    {(provided, _) => (
-                      <div
-                        className="board--tasks"
-                        key={statuses.id}
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                      >
-                        <div className="board-tasks--wrapper">
-                          <div className="board--tasks-header">
-                            {statuses.confirmed ? (
-                              <p {...provided.dragHandleProps}>{statuses.title}</p>
-                            ) : (
-                              <div>
-                                <input
-                                  onKeyDown={(e) => handleOnKeyDownTitle(e, statuses.id)}
-                                  onChange={(e) => handleOnChangeTitle(e, statuses.id)}
-                                />
-                                <div>
+    <div id="board" className="board">
+      <div className="board-head">div</div>
+      <div className="board-content">
+        <DragDropContext className="dnd-form" onDragEnd={onDragEnd}>
+          <Droppable droppableId="statuses" type="STATUSES" direction="horizontal">
+            {(providedStatuses, _) => (
+              <div ref={providedStatuses.innerRef}>
+                <div className={`sticky-shadow ${position >= 10 ? "show" : "hidden"}`}></div>
+                <div className="board-statuses" ref={statusesRef}>
+                  {state.map((statuses, index) => (
+                    <Draggable key={statuses.id} draggableId={statuses.id} index={index}>
+                      {(provided, _) => (
+                        <div
+                          className="board--tasks"
+                          key={statuses.id}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                        >
+                          <div className="board-tasks--wrapper">
+                            <div className="board--tasks-header">
+                              {statuses.confirmed ? (
+                                <div {...provided.dragHandleProps}>
+                                  <p>{statuses.title}</p>
                                   <img
-                                    src={confirmSvg}
-                                    alt="confirm"
-                                    onClick={() => handleOnConfirmStatuses(statuses.id)}
-                                  />
-                                  <img
-                                    src={candelSvg}
-                                    alt="delete"
-                                    onClick={() => handleOnDeleteStatuses(statuses.id)}
+                                    src={settingsSvg}
+                                    alt="settings"
+                                    onClick={() => handleOnClickSettings(id)}
                                   />
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                          <Droppable droppableId={statuses.id}>
-                            {(provided, snapshot) => (
-                              <div
-                                className="board--task"
-                                ref={provided.innerRef}
-                                style={getListStyle(snapshot.isDraggingOver)}
-                              >
-                                {statuses.tasks.map((item, index) => (
-                                  <div style={{ height: 50 }} key={item.id}>
-                                    <Draggable draggableId={item.id} index={index}>
-                                      {(provided, snapshot) => (
-                                        <Task
-                                          provided={provided}
-                                          snapshot={snapshot}
-                                          content={item.id}
-                                        />
-                                      )}
-                                    </Draggable>
+                              ) : (
+                                <div>
+                                  <input
+                                    onKeyDown={(e) => handleOnKeyDownTitle(e, statuses.id)}
+                                    onChange={(e) => handleOnChangeTitle(e, statuses.id)}
+                                  />
+                                  <div>
+                                    <img
+                                      src={confirmSvg}
+                                      alt="confirm"
+                                      onClick={() => handleOnConfirmStatuses(statuses.id)}
+                                    />
+                                    <img
+                                      src={candelSvg}
+                                      alt="delete"
+                                      onClick={() => handleOnDeleteStatuses(statuses.id)}
+                                    />
                                   </div>
-                                ))}
-                              </div>
-                            )}
-                          </Droppable>
-                          <button
-                            disabled={!statuses.confirmed}
-                            onClick={() => AddNewTask(statuses.id)}
-                          >
-                            create task
-                          </button>
+                                </div>
+                              )}
+                            </div>
+                            <Droppable droppableId={statuses.id}>
+                              {(provided, snapshot) => (
+                                <div
+                                  className="board--task"
+                                  ref={provided.innerRef}
+                                  style={getListStyle(snapshot.isDraggingOver)}
+                                >
+                                  {statuses.tasks.map((item, index) => (
+                                    <div style={{ height: 50 }} key={item.id}>
+                                      <Draggable draggableId={item.id} index={index}>
+                                        {(provided, snapshot) => (
+                                          <Task
+                                            provided={provided}
+                                            snapshot={snapshot}
+                                            content={item.id}
+                                          />
+                                        )}
+                                      </Draggable>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </Droppable>
+                            <button
+                              disabled={!statuses.confirmed}
+                              onClick={() => AddNewTask(statuses.id)}
+                            >
+                              create task
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-              </div>
+                      )}
+                    </Draggable>
+                  ))}
+                </div>
 
-              <button
-                disabled={!isAbleAddNew}
-                className="board--add-statuses"
-                onClick={AddNewStatuses}
-              >
-                +
-              </button>
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+                <button
+                  disabled={!isAbleAddNew}
+                  className="board--add-statuses"
+                  onClick={AddNewStatuses}
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+      {showSettings && (
+        <Portal idNode="board">
+          <div>hello</div>
+        </Portal>
+      )}
     </div>
   );
 };

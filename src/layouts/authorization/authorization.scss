@@ -1,4 +1,4 @@
-.authentication {
+.authorization {
   height: 100%;
   width: 100%;
   display: flex;
@@ -6,11 +6,11 @@
   align-items: center;
 
   // background: red;
-  .authentication-wrapper {
+  .authorization-wrapper {
     height: 400px;
     display: flex;
   }
-  .authentication-form {
+  .authorization-form {
     width: 500px;
     display: flex;
     justify-content: flex-end;
@@ -42,7 +42,7 @@
         color: #585858;
       }
     }
-    .authentication-buttongs {
+    .authorization-buttongs {
       height: 32px;
       display: flex;
       // justify-content: space;

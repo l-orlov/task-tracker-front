@@ -1,7 +1,9 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 
+import store from "./model/store";
 import AppRouter from "./AppRouter";
 import reportWebVitals from "./reportWebVitals";
 
@@ -9,7 +11,9 @@ import "./styles/styles.scss";
 
 ReactDOM.render(
   <BrowserRouter>
-    <AppRouter />
+    <Provider store={store}>
+      <AppRouter />
+    </Provider>
   </BrowserRouter>,
   document.getElementById("root"),
 );
