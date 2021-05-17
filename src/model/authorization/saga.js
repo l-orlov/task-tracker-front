@@ -14,7 +14,7 @@ function* authorization(action) {
       instance.post(`${REACT_APP_BACKEND_URL}/auth/sign-in`, {
         email: action.payload.email,
         password: action.payload.password,
-        fingerprint: "",
+        fingerprint: "some_fingerprint",
       }),
     );
     yield put(authorizationSuccess(response.data));
