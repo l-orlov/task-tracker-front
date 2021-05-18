@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 
 import { Input } from "../../components/";
 import { authorization } from "../../model/authorization/actions";
+import { registration } from "../../model/registration/actions";
 
 import logoSvg from "../../logo.svg";
 
@@ -15,6 +16,7 @@ const defaultValues = {
   email: "lev.orlov.5404@gmail.comab",
   firstName: "",
   lastName: "",
+  fingerprint: "some_fingerprint",
 };
 
 const loginFormFields = [
@@ -46,10 +48,11 @@ export const Authorization = () => {
     console.log(data);
     dispatch(authorization(data));
     // history.push("/projects");
+    dispatch(registration(data));
   };
   const handleonSignUp = (data) => {
     setIsSignIn(!isSignIn);
-    !isSignIn && console.log(data);
+    !isSignIn && dispatch(registration(data));
     reset();
   };
 

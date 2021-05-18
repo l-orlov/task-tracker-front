@@ -1,5 +1,9 @@
 import { types } from "./types";
 
+export const registration = (data) => ({
+  type: `${types.registration}`,
+  payload: data,
+});
 export const registrationStart = () => ({
   type: `${types.registration}_START`,
 });

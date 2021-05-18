@@ -1,6 +1,6 @@
 import { types } from "./types";
 
-const initialState = {
+const inititalState = {
   status: false,
   error: { error: {}, response: "", data: {} },
 };

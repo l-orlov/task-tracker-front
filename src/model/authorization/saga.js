@@ -5,15 +5,15 @@ import { authorizationStart, authorizationSuccess, authorizationError } from "./
 import { instance } from "../../utils/";
 
 const { REACT_APP_BACKEND_URL } = process.env;
-
 function* authorization(action) {
+  const { email, password, fingerprint } = action.payload;
   yield put(authorizationStart());
   try {
     const response = yield call(() =>
       instance.post(`${REACT_APP_BACKEND_URL}/auth/sign-in`, {
-        email: action.payload.email,
-        password: action.payload.password,
-        fingerprint: "some_fingerprint",
+        email,
+        password,
+        fingerprint,
       }),
     );
     yield put(authorizationSuccess(response.data));
@@ -28,6 +28,6 @@ function* authorization(action) {
   }
 }
 
-export default function* watchRegistration() {
+export default function* watchAuthorization() {
   yield takeEvery(types.authorization, authorization);
 }
