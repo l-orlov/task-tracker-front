@@ -4,14 +4,16 @@ import { useForm } from "react-hook-form";
 
 import { Input } from "../../components/";
 
+import "./projects.scss";
+
 const defaultValues = {
   "name": "",
   "description": "",
 };
 
 const createProjectFormFields = [
-  { title: "Название", name: "name", type: "text" },
-  { title: "Описание", name: "description", type: "text" },
+  { title: "Название", name: "name", type: "text", input: "input" },
+  { title: "Описание", name: "description", type: "text", input: "textarea" },
 ];
 
 export const Projects = ({ setNavigation }) => {
@@ -26,7 +28,8 @@ export const Projects = ({ setNavigation }) => {
 
   return (
     <div className="projects">
-      <form onSubmit={handleSubmit(handleOnSubmit)}>
+      <h2>Создание проекта</h2>
+      <form>
         {createProjectFormFields.map((el) => (
           <Input
             key={el.name}
@@ -35,8 +38,10 @@ export const Projects = ({ setNavigation }) => {
             title={el.title}
             name={el.name}
             type={el.type}
+            input={el.input}
           />
         ))}
+        <button onClick={handleSubmit(handleOnSubmit)}>Создать проект</button>
       </form>
     </div>
   );

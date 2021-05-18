@@ -11,9 +11,14 @@ import candelSvg from "./svg/cancel.svg";
 import settingsSvg from "./svg/settings.svg";
 
 import { Portal } from "../../components/portal/";
+
+import { ProjectDetails } from "../projectDetails/";
+import { ProjectAccess } from "../projectAccess/";
+import { UpdateTask } from "../updateTask/";
+import { CreateTask } from "../createTask/";
 // import
 
-import "./style.scss";
+import "./tasksBoard.scss";
 
 const structTask = {
   id: "",
@@ -62,7 +67,10 @@ export const TasksBoard = ({ setNavigation }) => {
   const [state, setState] = useState([]);
   const [isAbleAddNew, setIsAbleAddNew] = useState(true);
   const [position, setPostion] = useState(0);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showAccess, setShowAccess] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
 
   const ScrollListener = () => {
     setPostion(statusesRef.current.scrollLeft);
@@ -178,13 +186,25 @@ export const TasksBoard = ({ setNavigation }) => {
     setIsAbleAddNew(true);
   };
 
-  const handleOnClickSettings = (id) => {
-    setShowSettings(true);
+  const handleOnClickDetails = (id) => {
+    setShowDetails(true);
   };
+  const handleOnClickAccess = (id) => {
+    setShowAccess(true);
+  };
+
+  // const handleOnClickUpdate = () => {};
 
   return (
     <div id="board" className="board">
-      <div className="board-head">div</div>
+      <div className="board-head">
+        <h2>Статусы</h2>
+        <div>
+          <p onClick={() => handleOnClickDetails(id)}>Details</p>
+          <p onClick={() => handleOnClickAccess(id)}>Access</p>
+        </div>
+      </div>
+
       <div className="board-content">
         <DragDropContext className="dnd-form" onDragEnd={onDragEnd}>
           <Droppable droppableId="statuses" type="STATUSES" direction="horizontal">
@@ -208,8 +228,8 @@ export const TasksBoard = ({ setNavigation }) => {
                                   <p>{statuses.title}</p>
                                   <img
                                     src={settingsSvg}
-                                    alt="settings"
-                                    onClick={() => handleOnClickSettings(id)}
+                                    alt="update"
+                                    onClick={() => setShowUpdate(true)}
                                   />
                                 </div>
                               ) : (
@@ -258,7 +278,7 @@ export const TasksBoard = ({ setNavigation }) => {
                             </Droppable>
                             <button
                               disabled={!statuses.confirmed}
-                              onClick={() => AddNewTask(statuses.id)}
+                              onClick={() => setShowCreate(true)}
                             >
                               create task
                             </button>
@@ -281,9 +301,12 @@ export const TasksBoard = ({ setNavigation }) => {
           </Droppable>
         </DragDropContext>
       </div>
-      {showSettings && (
-        <Portal idNode="board">
-          <div>hello</div>
+      {(showDetails || showAccess || showUpdate || showCreate) && (
+        <Portal idNode="root">
+          {showDetails && <ProjectDetails setShowDetails={setShowDetails} />}
+          {showAccess && <ProjectAccess setShowAccess={setShowAccess} />}
+          {showUpdate && <UpdateTask setShowUpdate={setShowUpdate} />}
+          {showCreate && <CreateTask setShowCreate={setShowCreate} />}
         </Portal>
       )}
     </div>

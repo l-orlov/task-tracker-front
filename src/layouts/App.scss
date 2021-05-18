@@ -7,11 +7,25 @@
 .app-header {
   margin-bottom: 20px;
 }
-.app-content {
+.app-body {
   display: flex;
   height: 100%;
   width: 100%;
   .navigation {
+    width: 100px;
+    ul {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      list-style: none;
+      padding-left: 10px;
+      box-sizing: border-box;
+    }
     margin-right: 20px;
+  }
+  .app-content {
+    position: relative;
+    width: 1000px;
+    // width: 100%;
   }
 }

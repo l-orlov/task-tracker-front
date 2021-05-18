@@ -35,19 +35,21 @@ export const App = () => {
   return (
     <div className="app">
       <div className="app-header">тут типа лого и все такое</div>
-      <div className="app-content">
+      <div className="app-body">
         <Navigation navigation={navigation} />
-        <Switch>
-          <Route
-            exact
-            path={`${path}/`}
-            render={() => <Projects setNavigation={setNavigation} />}
-          />
-          <Route
-            path={`${path}/:id/board`}
-            render={() => <TasksBoard setNavigation={setNavigation} />}
-          />
-        </Switch>
+        <div className="app-content">
+          <Switch>
+            <Route
+              exact
+              path={`${path}/`}
+              render={() => <Projects setNavigation={setNavigation} />}
+            />
+            <Route
+              path={`${path}/:id/board`}
+              render={() => <TasksBoard setNavigation={setNavigation} />}
+            />
+          </Switch>
+        </div>
       </div>
     </div>
   );

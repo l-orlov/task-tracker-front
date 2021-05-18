@@ -1,16 +1,21 @@
-import React, { useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Switch, Route, useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { Authorization } from "./layouts/authorization/authorization";
 import { App } from "./layouts/App";
 
-import { ProtectedRoute } from "./components/protectedRoute/protectedRoute";
+import { ProtectedRoute } from "./components/";
 
 import "./app.scss";
 
 function AppRouter() {
-  // const history = useHistory();
-  const [isAuth, setIsAuth] = useState(true);
+  const history = useHistory();
+  // const [isAuth, setIsAuth] = useState(true);
+  const isAuth = useSelector((state) => state.authorization.status);
+  useEffect(() => {
+    isAuth && history.push("/projects");
+  }, [isAuth, history]);
 
   return (
     <Switch>

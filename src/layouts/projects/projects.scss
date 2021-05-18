@@ -1,0 +1,18 @@
+.projects {
+  width: 100%;
+  form {
+    display: flex;
+    flex-direction: column;
+    // width: 500px;
+
+    button {
+      width: 190px;
+      height: 32px;
+      font-size: 16px;
+      background: white;
+      border-radius: 2px;
+      border: 1px solid #585858;
+      margin-top: 40px;
+    }
+  }
+}

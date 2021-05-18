@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-// import "./Portal.scss";
+import "./portal.scss";
 
 export const Portal = ({ children, idNode }) => {
   const el = document.getElementById(idNode);

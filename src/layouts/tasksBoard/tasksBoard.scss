@@ -3,10 +3,13 @@ $color-lightgray: rgb(244, 245, 247);
 .board {
   overflow-x: scroll;
   display: flex;
-  width: 1000px;
+  flex-direction: column;
+  // width: 1000px;
   padding: 0 10px;
   height: 100%;
+  width: 100%;
   box-sizing: border-box;
+  position: relative;
 
   .sticky-shadow {
     &.show {
@@ -29,6 +32,7 @@ $color-lightgray: rgb(244, 245, 247);
     box-shadow: rgb(255 255 255) 0px 80px 0px, rgb(9 30 66 / 8%) 5px -2px 7px;
     // background: rebeccapurple;
   }
+
   .board-statuses {
     height: 100%;
     display: flex;
@@ -40,6 +44,19 @@ $color-lightgray: rgb(244, 245, 247);
       display: none;
     }
   }
+
+  .board-head {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    & > img {
+      cursor: pointer;
+      width: 15px;
+      height: 15px;
+      margin-right: 10px;
+    }
+  }
+
   .board-content {
     & > div {
       width: 100%;
@@ -110,6 +127,7 @@ $color-lightgray: rgb(244, 245, 247);
             height: 15px;
             margin-right: 10px;
           }
+
           input {
             width: 170px;
             height: 28px;

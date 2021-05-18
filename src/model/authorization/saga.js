@@ -7,7 +7,6 @@ import { instance } from "../../utils/";
 const { REACT_APP_BACKEND_URL } = process.env;
 
 function* authorization(action) {
-  console.log(action);
   yield put(authorizationStart());
   try {
     const response = yield call(() =>
@@ -19,15 +18,13 @@ function* authorization(action) {
     );
     yield put(authorizationSuccess(response.data));
   } catch (error) {
-    console.log(error);
-    // yield put(
-
-    //   authorizationError({
-    //     response: error.response,
-    //     error: error,
-    //     data: error.response.data,
-    //   }),
-    // );
+    yield put(
+      authorizationError({
+        response: error.response,
+        error: error,
+        data: error.response.data,
+      }),
+    );
   }
 }
 
