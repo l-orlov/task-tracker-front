@@ -4,8 +4,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { Input } from "../../components/";
-import { authorization } from "../../model/authorization/actions";
-import { registration } from "../../model/registration/actions";
+import { authorization, registration } from "../../model/user/actions";
 
 import logoSvg from "../../logo.svg";
 
@@ -13,7 +12,7 @@ import "./authorization.scss";
 
 const defaultValues = {
   password: "123",
-  email: "lev.orlov.5404@gmail.comab",
+  email: "test@gmail.com",
   firstName: "",
   lastName: "",
   fingerprint: "some_fingerprint",
@@ -45,10 +44,7 @@ export const Authorization = () => {
 
   const handleOnSignIn = (data) => {
     setIsSignIn(true);
-    console.log(data);
     dispatch(authorization(data));
-    // history.push("/projects");
-    dispatch(registration(data));
   };
   const handleonSignUp = (data) => {
     setIsSignIn(!isSignIn);

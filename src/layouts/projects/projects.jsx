@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 import { Input } from "../../components/";
+import { createProject, getProjects } from "../../model/projects/actions";
 
 import "./projects.scss";
 
@@ -17,14 +19,33 @@ const createProjectFormFields = [
 ];
 
 export const Projects = ({ setNavigation }) => {
-  const { id } = useParams();
+  const dispatch = useDispatch();
   const { register, handleSubmit } = useForm(defaultValues);
 
-  useEffect(() => {
-    setNavigation([{ title: `project-1`, id: "board", path: `/projects/1/board` }]);
-  }, [setNavigation, id]);
+  const isCreated = useSelector((state) => state.projects.isCreated);
+  const projects = useSelector((state) => state.projects.projects);
 
-  const handleOnSubmit = (data) => {};
+  useEffect(() => {
+    dispatch(getProjects());
+  }, []);
+
+  useEffect(() => {
+    isCreated && dispatch(getProjects());
+  }, [isCreated]);
+
+  useEffect(() => {
+    const nav = projects.map((el) => ({
+      title: el.name,
+      id: el.id,
+      path: `/projects/${el.id}/board`,
+    }));
+
+    setNavigation(nav);
+  }, [setNavigation, projects]);
+
+  const handleOnSubmit = (data) => {
+    dispatch(createProject(data));
+  };
 
   return (
     <div className="projects">

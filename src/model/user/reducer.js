@@ -6,7 +6,25 @@ const inititalState = {
 };
 
 export default function reducer(state = inititalState, action) {
-  switch (key) {
+  switch (action.type) {
+    case `${types.authorization}_START`:
+      return {
+        ...state,
+        status: false,
+        error: { error: {}, response: "", data: {} },
+      };
+    case `${types.authorization}_SUCCESS`:
+      return {
+        ...state,
+        status: true,
+        error: { error: {}, response: "", data: {} },
+      };
+    case `${types.authorization}_ERROR`:
+      return {
+        ...state,
+        status: false,
+        error: action.payload,
+      };
     case `${types.registration}_START`:
       return {
         ...state,

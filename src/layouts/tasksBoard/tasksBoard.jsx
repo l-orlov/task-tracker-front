@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import produce from "immer";
@@ -16,21 +17,30 @@ import { ProjectDetails } from "../projectDetails/";
 import { ProjectAccess } from "../projectAccess/";
 import { UpdateTask } from "../updateTask/";
 import { CreateTask } from "../createTask/";
+
+import { getProjectBoard } from "../../model/board/actions";
 // import
 
 import "./tasksBoard.scss";
 
 const structTask = {
-  id: "",
-  title: "",
-  user: "",
+  "assigneeAvatarURL": "",
+  "assigneeFirstname": "",
+  "assigneeId": 0,
+  "assigneeLastname": "",
+  "taskId": 0,
+  "taskOrderNum": 0,
+  "taskTitle": "",
+  // title: "",
 };
 
 const structProgressStatus = {
-  id: "",
+  // id: "", // progressStatusId
   confirmed: false,
-  title: "",
   tasks: [],
+  progressStatusId: "",
+  progressStatusName: "",
+  progressStatusOrderNum: 0,
 };
 
 // a little function to help us with reordering the result
@@ -62,6 +72,7 @@ const getListStyle = (isDraggingOver) => ({
 
 export const TasksBoard = ({ setNavigation }) => {
   // const history = useHistory();
+  const dispatch = useDispatch();
   const statusesRef = useRef(null);
   const { id } = useParams();
   const [state, setState] = useState([]);
@@ -72,9 +83,20 @@ export const TasksBoard = ({ setNavigation }) => {
   const [showUpdate, setShowUpdate] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
 
+  const projectBoard = useSelector((state) => state.board.projectBoard);
+
   const ScrollListener = () => {
     setPostion(statusesRef.current.scrollLeft);
   };
+
+  useEffect(() => {
+    setState(projectBoard);
+    console.log(projectBoard);
+  }, [projectBoard]);
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   useEffect(() => {
     setNavigation([
@@ -84,8 +106,9 @@ export const TasksBoard = ({ setNavigation }) => {
   }, [setNavigation, id]);
 
   useEffect(() => {
+    dispatch(getProjectBoard({ id }));
     statusesRef.current.addEventListener("scroll", ScrollListener);
-    console.log("hello");
+
     return () =>
       statusesRef.current && statusesRef.current.removeEventListener("scroll", ScrollListener);
   }, []);
@@ -93,23 +116,23 @@ export const TasksBoard = ({ setNavigation }) => {
   const AddNewStatuses = () => {
     const projs = [...state];
     const id = uuid();
-    projs.push({ ...structProgressStatus, id: `statuses-${id}` });
+    projs.push({ ...structProgressStatus, progressStatusId: `statuses-${id}` });
     setState(projs);
     setIsAbleAddNew(false);
   };
 
   const AddNewTask = (id) => {
-    state.find((el) => el.id === id);
+    state.find((el) => el.progressStatusId === id);
     const updatedProject = produce(state, (draftProj) => {
-      const tasks = draftProj.find((el) => el.id === id).tasks;
+      const tasks = draftProj.find((el) => el.progressStatusId === id).tasks;
       const newId = uuid();
-      tasks.push({ ...structTask, id: newId, title: newId });
+      tasks.push({ ...structTask, taskId: newId, taskTitle: newId });
     });
     setState(updatedProject);
     // setIsAbleAddNew(true);
   };
 
-  const getList = (id) => state.find((el) => el.id === id).tasks;
+  const getList = (id) => state.find((el) => el.progressStatusId === id).tasks;
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -120,7 +143,7 @@ export const TasksBoard = ({ setNavigation }) => {
       if (source.droppableId === destination.droppableId) {
         const items = reorder(getList(source.droppableId), source.index, destination.index);
         const updatedProject = produce(state, (draftProj) => {
-          const proj = draftProj.find((el) => el.id === source.droppableId);
+          const proj = draftProj.find((el) => el.progressStatusId === source.droppableId);
           proj.tasks = items;
         });
         setState(updatedProject);
@@ -133,8 +156,8 @@ export const TasksBoard = ({ setNavigation }) => {
         );
         const updatedProject = produce(state, (draftProj) => {
           for (let proj of draftProj) {
-            if (result[proj.id]) {
-              proj.tasks = result[proj.id];
+            if (result[proj.progressStatusId]) {
+              proj.tasks = result[proj.progressStatusId];
             }
           }
         });
@@ -148,15 +171,16 @@ export const TasksBoard = ({ setNavigation }) => {
 
   const handleOnChangeTitle = ({ target }, id) => {
     const updatedProject = produce(state, (draftProj) => {
-      const proj = draftProj.find((el) => el.id === id);
+      const proj = draftProj.find((el) => el.progressStatusId === id);
       proj.title = target.value;
     });
     setState(updatedProject);
   };
+
   const handleOnKeyDownTitle = ({ keyCode }, id) => {
     if (keyCode === 13) {
       const updatedProject = produce(state, (draftProj) => {
-        const proj = draftProj.find((el) => el.id === id);
+        const proj = draftProj.find((el) => el.progressStatusId === id);
         if (proj.title) {
           proj.confirmed = true;
         }
@@ -168,7 +192,7 @@ export const TasksBoard = ({ setNavigation }) => {
 
   const handleOnConfirmStatuses = (id) => {
     const updatedProject = produce(state, (draftProj) => {
-      const proj = draftProj.find((el) => el.id === id);
+      const proj = draftProj.find((el) => el.progressStatusId === id);
       if (proj.title) {
         proj.confirmed = true;
       }
@@ -179,7 +203,7 @@ export const TasksBoard = ({ setNavigation }) => {
 
   const handleOnDeleteStatuses = (id) => {
     const updatedProject = produce(state, (draftProj) => {
-      const index = draftProj.indexOf(draftProj.find((el) => el.id === id));
+      const index = draftProj.indexOf(draftProj.find((el) => el.progressStatusId === id));
       draftProj.splice(index, 1);
     });
     setState(updatedProject);
@@ -213,11 +237,15 @@ export const TasksBoard = ({ setNavigation }) => {
                 <div className={`sticky-shadow ${position >= 10 ? "show" : "hidden"}`}></div>
                 <div className="board-statuses" ref={statusesRef}>
                   {state.map((statuses, index) => (
-                    <Draggable key={statuses.id} draggableId={statuses.id} index={index}>
+                    <Draggable
+                      key={statuses.progressStatusId}
+                      draggableId={statuses.progressStatusId}
+                      index={index}
+                    >
                       {(provided, _) => (
                         <div
                           className="board--tasks"
-                          key={statuses.id}
+                          key={statuses.progressStatusId}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                         >
@@ -225,7 +253,7 @@ export const TasksBoard = ({ setNavigation }) => {
                             <div className="board--tasks-header">
                               {statuses.confirmed ? (
                                 <div {...provided.dragHandleProps}>
-                                  <p>{statuses.title}</p>
+                                  <p>{statuses.progressStatusName}</p>
                                   <img
                                     src={settingsSvg}
                                     alt="update"
@@ -235,25 +263,33 @@ export const TasksBoard = ({ setNavigation }) => {
                               ) : (
                                 <div>
                                   <input
-                                    onKeyDown={(e) => handleOnKeyDownTitle(e, statuses.id)}
-                                    onChange={(e) => handleOnChangeTitle(e, statuses.id)}
+                                    onKeyDown={(e) =>
+                                      handleOnKeyDownTitle(e, statuses.progressStatusId)
+                                    }
+                                    onChange={(e) =>
+                                      handleOnChangeTitle(e, statuses.progressStatusId)
+                                    }
                                   />
                                   <div>
                                     <img
                                       src={confirmSvg}
                                       alt="confirm"
-                                      onClick={() => handleOnConfirmStatuses(statuses.id)}
+                                      onClick={() =>
+                                        handleOnConfirmStatuses(statuses.progressStatusId)
+                                      }
                                     />
                                     <img
                                       src={candelSvg}
                                       alt="delete"
-                                      onClick={() => handleOnDeleteStatuses(statuses.id)}
+                                      onClick={() =>
+                                        handleOnDeleteStatuses(statuses.progressStatusId)
+                                      }
                                     />
                                   </div>
                                 </div>
                               )}
                             </div>
-                            <Droppable droppableId={statuses.id}>
+                            <Droppable droppableId={statuses.progressStatusId}>
                               {(provided, snapshot) => (
                                 <div
                                   className="board--task"
@@ -261,13 +297,13 @@ export const TasksBoard = ({ setNavigation }) => {
                                   style={getListStyle(snapshot.isDraggingOver)}
                                 >
                                   {statuses.tasks.map((item, index) => (
-                                    <div style={{ height: 50 }} key={item.id}>
-                                      <Draggable draggableId={item.id} index={index}>
+                                    <div style={{ height: 50 }} key={item.taskId}>
+                                      <Draggable draggableId={item.taskId} index={index}>
                                         {(provided, snapshot) => (
                                           <Task
                                             provided={provided}
                                             snapshot={snapshot}
-                                            content={item.id}
+                                            content={item.taskTitle}
                                           />
                                         )}
                                       </Draggable>
@@ -278,7 +314,7 @@ export const TasksBoard = ({ setNavigation }) => {
                             </Droppable>
                             <button
                               disabled={!statuses.confirmed}
-                              onClick={() => setShowCreate(true)}
+                              onClick={() => AddNewTask(statuses.progressStatusId)}
                             >
                               create task
                             </button>

@@ -12,7 +12,7 @@ import "./app.scss";
 function AppRouter() {
   const history = useHistory();
   // const [isAuth, setIsAuth] = useState(true);
-  const isAuth = useSelector((state) => state.authorization.status);
+  const isAuth = useSelector((state) => state.user.status);
   useEffect(() => {
     isAuth && history.push("/projects");
   }, [isAuth, history]);

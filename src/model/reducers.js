@@ -1,9 +1,13 @@
 import { combineReducers } from "redux";
 
-import authorization from "./authorization/reducer";
+import user from "./user/reducer";
+import projects from "./projects/reducer";
+import board from "./board/reducer";
 
 const appReducer = combineReducers({
-  authorization,
+  user,
+  projects,
+  board,
 });
 
 export default function rootReducer(state, action) {
