@@ -222,7 +222,7 @@ export const TasksBoard = ({ setNavigation }) => {
   return (
     <div id="board" className="board">
       <div className="board-head">
-        <h2>Статусы</h2>
+        <h2>Статусы выполнения</h2>
         <div>
           <p onClick={() => handleOnClickDetails(id)}>Details</p>
           <p onClick={() => handleOnClickAccess(id)}>Access</p>
