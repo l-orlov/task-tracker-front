@@ -28,7 +28,7 @@ const loginFormFields = [
 ];
 
 const registrationFormFields = [
-  { title: "Почти", name: "email", type: "text" },
+  { title: "Почта", name: "email", type: "text" },
   { title: "Имя", name: "firstName", type: "text" },
   { title: "Фамилия", name: "lastName", type: "text" },
   { title: "Пароль", name: "password", type: "password" },
