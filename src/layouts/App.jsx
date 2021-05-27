@@ -34,7 +34,7 @@ export const App = () => {
 
   return (
     <div className="app">
-      <div className="app-header">тут типа лого и все такое</div>
+      <div className="app-header">тут должен быть логотип</div>
       <div className="app-body">
         <Navigation navigation={navigation} />
         <div className="app-content">
