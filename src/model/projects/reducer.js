@@ -22,6 +22,7 @@ export default function reducer(state = inititalState, action) {
         status: true,
         isCreated: true,
         error: { error: {}, response: "", data: {} },
+        projects: [...state.projects, action.payload],
       };
     case `${types.createProject}_ERROR`:
       return {

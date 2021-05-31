@@ -1,4 +1,6 @@
 export const types = {
+  createStatuses: "CREATE_STATUSES",
+  createTask: "CREATE_TASK",
   getProjectBoard: "GET_PROJECT_BOARD",
   UpdateProjectBoardParts: "UPDATE_PROJECT_BOARD_PARTS",
   UpdateProjectBoardProgressStatuses: "UPDATE_PROJECT_BOARD_PROGRESS_STATUSES",

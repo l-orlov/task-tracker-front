@@ -23,7 +23,7 @@ function* createProject(action) {
         description,
       }),
     );
-    yield put(createProjectSuccess(response.data));
+    yield put(createProjectSuccess({ ...response.data, name, description }));
   } catch (error) {
     yield put(
       createProjectError({

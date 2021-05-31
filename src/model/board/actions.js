@@ -15,7 +15,39 @@ export const getProjectBoardError = () => ({
   type: `${types.getProjectBoard}_ERROR`,
 });
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const createStatuses = (data) => ({
+  type: `${types.createStatuses}`,
+  payload: data,
+});
+
+export const createStatusesStart = () => ({
+  type: `${types.createStatuses}_START`,
+});
+export const createStatusesSuccess = (data) => ({
+  type: `${types.createStatuses}_SUCCESS`,
+  payload: data,
+});
+export const createStatusesError = () => ({
+  type: `${types.createStatuses}_ERROR`,
+});
+
+export const createTask = (data) => ({
+  type: `${types.createTask}`,
+  payload: data,
+});
+
+export const createTaskStart = () => ({
+  type: `${types.createTask}_START`,
+});
+export const createTaskSuccess = (data) => ({
+  type: `${types.createTask}_SUCCESS`,
+  payload: data,
+});
+export const createTaskError = () => ({
+  type: `${types.createTask}_ERROR`,
+});
+
+////////////////////////////////////////////////////UPDATE/////////////////////////////////////////////////////////////////////////////
 
 export const UpdateProjectBoardParts = (data) => ({
   type: `${types.UpdateProjectBoardParts}`,

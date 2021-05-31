@@ -18,7 +18,7 @@ import { ProjectAccess } from "../projectAccess/";
 import { UpdateTask } from "../updateTask/";
 import { CreateTask } from "../createTask/";
 
-import { getProjectBoard } from "../../model/board/actions";
+import { getProjectBoard, createStatuses } from "../../model/board/actions";
 // import
 
 import "./tasksBoard.scss";
@@ -69,7 +69,9 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 const getListStyle = (isDraggingOver) => ({
   // background: isDraggingOver ? "lightblue" : "lightgrey",
 });
-
+////////////////////////////////////////////////////////////////////////////////////////////////
+window["__react-beautiful-dnd-disable-dev-warnings"] = true;
+////////////////////////////////////////////////////////////////////////////////////////////////
 export const TasksBoard = ({ setNavigation }) => {
   // const history = useHistory();
   const dispatch = useDispatch();
@@ -81,7 +83,8 @@ export const TasksBoard = ({ setNavigation }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showAccess, setShowAccess] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
-  const [showCreate, setShowCreate] = useState(false);
+  const [showCreateTask, setShowCreateTask] = useState(false);
+  const [idStatuses, setIdStatuses] = useState("");
 
   const projectBoard = useSelector((state) => state.board.projectBoard);
 
@@ -91,7 +94,6 @@ export const TasksBoard = ({ setNavigation }) => {
 
   useEffect(() => {
     setState(projectBoard);
-    console.log(projectBoard);
   }, [projectBoard]);
 
   useEffect(() => {
@@ -122,14 +124,16 @@ export const TasksBoard = ({ setNavigation }) => {
   };
 
   const AddNewTask = (id) => {
-    state.find((el) => el.progressStatusId === id);
-    const updatedProject = produce(state, (draftProj) => {
-      const tasks = draftProj.find((el) => el.progressStatusId === id).tasks;
-      const newId = uuid();
-      tasks.push({ ...structTask, taskId: newId, taskTitle: newId });
-    });
-    setState(updatedProject);
+    // state.find((el) => el.progressStatusId === id);
+    // const updatedProject = produce(state, (draftProj) => {
+    //   const tasks = draftProj.find((el) => el.progressStatusId === id).tasks;
+    //   const newId = uuid();
+    //   tasks.push({ ...structTask, taskId: newId, taskTitle: newId });
+    // });
+    // setState(updatedProject);
     // setIsAbleAddNew(true);
+    setIdStatuses(id);
+    setShowCreateTask(true);
   };
 
   const getList = (id) => state.find((el) => el.progressStatusId === id).tasks;
@@ -190,14 +194,17 @@ export const TasksBoard = ({ setNavigation }) => {
     }
   };
 
-  const handleOnConfirmStatuses = (id) => {
-    const updatedProject = produce(state, (draftProj) => {
-      const proj = draftProj.find((el) => el.progressStatusId === id);
-      if (proj.title) {
-        proj.confirmed = true;
-      }
-    });
-    setState(updatedProject);
+  const handleOnConfirmStatuses = (idStatuses) => {
+    // const updatedProject = produce(state, (draftProj) => {
+    //   const proj = draftProj.find((el) => el.progressStatusId === idStatuses);
+    //   if (proj.title) {
+    //     proj.confirmed = true;
+    //   }
+    // });
+    // console.log("hello");
+    const obj = state.find((el) => el.progressStatusId === idStatuses);
+    dispatch(createStatuses({ projectId: id, name: obj.title, orderNum: state.length }));
+    // setState(updatedProject);
     setIsAbleAddNew(true);
   };
 
@@ -337,12 +344,20 @@ export const TasksBoard = ({ setNavigation }) => {
           </Droppable>
         </DragDropContext>
       </div>
-      {(showDetails || showAccess || showUpdate || showCreate) && (
+      {(showDetails || showAccess || showUpdate || showCreateTask) && (
         <Portal idNode="root">
-          {showDetails && <ProjectDetails setShowDetails={setShowDetails} />}
-          {showAccess && <ProjectAccess setShowAccess={setShowAccess} />}
-          {showUpdate && <UpdateTask setShowUpdate={setShowUpdate} />}
-          {showCreate && <CreateTask setShowCreate={setShowCreate} />}
+          {showDetails && (
+            <ProjectDetails setShowDetails={setShowDetails} idStatuses={idStatuses} id={id} />
+          )}
+          {showAccess && (
+            <ProjectAccess setShowAccess={setShowAccess} idStatuses={idStatuses} id={id} />
+          )}
+          {showUpdate && (
+            <UpdateTask setShowUpdate={setShowUpdate} idStatuses={idStatuses} id={id} />
+          )}
+          {showCreateTask && (
+            <CreateTask setShowCreate={setShowCreateTask} idStatuses={idStatuses} id={id} />
+          )}
         </Portal>
       )}
     </div>

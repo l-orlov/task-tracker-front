@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 import { Input } from "../../components/";
@@ -22,16 +21,16 @@ export const Projects = ({ setNavigation }) => {
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm(defaultValues);
 
-  const isCreated = useSelector((state) => state.projects.isCreated);
+  // const isCreated = useSelector((state) => state.projects.isCreated);
   const projects = useSelector((state) => state.projects.projects);
 
   useEffect(() => {
     dispatch(getProjects());
   }, []);
 
-  useEffect(() => {
-    isCreated && dispatch(getProjects());
-  }, [isCreated]);
+  // useEffect(() => {
+  //   isCreated && dispatch(getProjects());
+  // }, [isCreated]);
 
   useEffect(() => {
     const nav = projects.map((el) => ({

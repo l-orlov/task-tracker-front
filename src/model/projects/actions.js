@@ -7,8 +7,9 @@ export const createProject = (data) => ({
 export const createProjectStart = () => ({
   type: `${types.createProject}_START`,
 });
-export const createProjectSuccess = () => ({
+export const createProjectSuccess = (data) => ({
   type: `${types.createProject}_SUCCESS`,
+  payload: data,
 });
 export const createProjectError = () => ({
   type: `${types.createProject}_ERROR`,

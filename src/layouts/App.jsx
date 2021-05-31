@@ -5,6 +5,7 @@ import { TasksBoard } from "./tasksBoard/";
 import { Projects } from "./projects";
 
 import "./App.scss";
+import logoSvg from "../logo.svg";
 
 export const Navigation = ({ navigation }) => {
   return (
@@ -28,13 +29,35 @@ export const Navigation = ({ navigation }) => {
   );
 };
 
+export const Header = () => {
+  return (
+    <div className="header">
+      <div className="header-logo">
+        <div>
+          <img src={logoSvg} alt="" />
+          <p className="logo-smile">: )</p>
+        </div>
+
+        <p
+          style={{
+            fontWeight: "bold",
+          }}
+        >
+          Task-Tracker
+        </p>
+      </div>
+      <div className="header-user"></div>
+    </div>
+  );
+};
+
 export const App = () => {
   const { path } = useRouteMatch();
   const [navigation, setNavigation] = useState([]);
 
   return (
     <div className="app">
-      <div className="app-header">тут типа лого и все такое</div>
+      <Header />
       <div className="app-body">
         <Navigation navigation={navigation} />
         <div className="app-content">
