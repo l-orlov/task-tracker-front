@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Switch, Route, useRouteMatch, NavLink } from "react-router-dom";
+import { Route, useRouteMatch, NavLink } from "react-router-dom";
 
 import { TasksBoard } from "./tasksBoard/";
 import { Projects } from "./projects";
@@ -58,6 +58,18 @@ export const App = () => {
   const { path } = useRouteMatch();
   const [navigation, setNavigation] = useState([]);
 
+  /* <Portal idNode="root">
+{showDetails && (
+  <ProjectDetails setShowDetails={setShowDetails} idStatuses={idStatuses} id={id} />
+)}
+{showAccess && (
+  <ProjectAccess setShowAccess={setShowAccess} idStatuses={idStatuses} id={id} />
+)}
+{showUpdate && (
+  <UpdateTask setShowUpdate={setShowUpdate} idStatuses={idStatuses} id={id} />
+)}
+</Portal> */
+
   return (
     <div className="app">
       <Header />
@@ -94,16 +106,3 @@ export const App = () => {
     </div>
   );
 };
-{
-  /* <Portal idNode="root">
-{showDetails && (
-  <ProjectDetails setShowDetails={setShowDetails} idStatuses={idStatuses} id={id} />
-)}
-{showAccess && (
-  <ProjectAccess setShowAccess={setShowAccess} idStatuses={idStatuses} id={id} />
-)}
-{showUpdate && (
-  <UpdateTask setShowUpdate={setShowUpdate} idStatuses={idStatuses} id={id} />
-)}
-</Portal> */
-}

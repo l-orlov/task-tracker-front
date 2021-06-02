@@ -26,7 +26,7 @@ export const Projects = ({ setNavigation }) => {
 
   useEffect(() => {
     dispatch(getProjects());
-  }, []);
+  }, [dispatch]);
 
   // useEffect(() => {
   //   isCreated && dispatch(getProjects());

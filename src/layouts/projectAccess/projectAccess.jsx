@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-import { RadioButtonGroup } from "../../components/radioButtonGroup/";
+// import { RadioButtonGroup } from "../../components/radioButtonGroup/";
 import "./projectAccess.scss";
 
 export const ProjectAccess = ({ setShowAccess }) => {
-  const [value, setValue] = useState("");
+  // const [value, setValue] = useState("");
 
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
+  // useEffect(() => {
+  //   console.log(value);
+  // }, [value]);
 
   return (
     <div className="projectAccess">

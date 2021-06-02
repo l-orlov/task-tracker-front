@@ -111,10 +111,9 @@ export const TasksBoard = ({ setNavigation }) => {
   useEffect(() => {
     dispatch(getProjectBoard({ id }));
     statusesRef.current.addEventListener("scroll", ScrollListener);
-
     return () =>
       statusesRef.current && statusesRef.current.removeEventListener("scroll", ScrollListener);
-  }, []);
+  }, [dispatch, id]);
 
   const AddNewStatuses = () => {
     const projs = [...state];
