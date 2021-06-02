@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import produce from "immer";
 import { v4 as uuid } from "uuid";
@@ -9,30 +9,35 @@ import { Task } from "./task/task";
 
 import confirmSvg from "./svg/confirm.svg";
 import candelSvg from "./svg/cancel.svg";
-import settingsSvg from "./svg/settings.svg";
 
-import { Portal } from "../../components/portal/";
+// import { Portal } from "../../components/portal/";
 
-import { ProjectDetails } from "../projectDetails/";
-import { ProjectAccess } from "../projectAccess/";
-import { UpdateTask } from "../updateTask/";
-import { CreateTask } from "../createTask/";
+// import { ProjectDetails } from "../projectDetails/";
+// import { ProjectAccess } from "../projectAccess/";
+// import { UpdateTask } from "../updateTask/";
+// import { CreateTask } from "../createTask/";
 
-import { getProjectBoard, createStatuses } from "../../model/board/actions";
+import {
+  getProjectBoard,
+  createStatuses,
+  UpdateProjectBoardProgressStatusTasks,
+  UpdateProjectBoardProgressStatuses,
+  UpdateProjectBoardParts,
+} from "../../model/board/actions";
 // import
 
 import "./tasksBoard.scss";
 
-const structTask = {
-  "assigneeAvatarURL": "",
-  "assigneeFirstname": "",
-  "assigneeId": 0,
-  "assigneeLastname": "",
-  "taskId": 0,
-  "taskOrderNum": 0,
-  "taskTitle": "",
-  // title: "",
-};
+// const structTask = {
+//   "assigneeAvatarURL": "",
+//   "assigneeFirstname": "",
+//   "assigneeId": 0,
+//   "assigneeLastname": "",
+//   "taskId": 0,
+//   "taskOrderNum": 0,
+//   "taskTitle": "",
+//   // title: "",
+// };
 
 const structProgressStatus = {
   // id: "", // progressStatusId
@@ -73,18 +78,14 @@ const getListStyle = (isDraggingOver) => ({
 window["__react-beautiful-dnd-disable-dev-warnings"] = true;
 ////////////////////////////////////////////////////////////////////////////////////////////////
 export const TasksBoard = ({ setNavigation }) => {
-  // const history = useHistory();
+  const history = useHistory();
   const dispatch = useDispatch();
   const statusesRef = useRef(null);
   const { id } = useParams();
+
   const [state, setState] = useState([]);
   const [isAbleAddNew, setIsAbleAddNew] = useState(true);
   const [position, setPostion] = useState(0);
-  const [showDetails, setShowDetails] = useState(false);
-  const [showAccess, setShowAccess] = useState(false);
-  const [showUpdate, setShowUpdate] = useState(false);
-  const [showCreateTask, setShowCreateTask] = useState(false);
-  const [idStatuses, setIdStatuses] = useState("");
 
   const projectBoard = useSelector((state) => state.board.projectBoard);
 
@@ -97,7 +98,7 @@ export const TasksBoard = ({ setNavigation }) => {
   }, [projectBoard]);
 
   useEffect(() => {
-    console.log(state);
+    console.log("pewpew", state);
   }, [state]);
 
   useEffect(() => {
@@ -123,17 +124,9 @@ export const TasksBoard = ({ setNavigation }) => {
     setIsAbleAddNew(false);
   };
 
-  const AddNewTask = (id) => {
-    // state.find((el) => el.progressStatusId === id);
-    // const updatedProject = produce(state, (draftProj) => {
-    //   const tasks = draftProj.find((el) => el.progressStatusId === id).tasks;
-    //   const newId = uuid();
-    //   tasks.push({ ...structTask, taskId: newId, taskTitle: newId });
-    // });
-    // setState(updatedProject);
-    // setIsAbleAddNew(true);
-    setIdStatuses(id);
-    setShowCreateTask(true);
+  const AddNewTask = (statusesId) => {
+    const tmpId = statusesId.slice("statuses-".length, statusesId.length);
+    history.replace(`/projects/${id}/board/statuses/${tmpId}/create_task`);
   };
 
   const getList = (id) => state.find((el) => el.progressStatusId === id).tasks;
@@ -150,6 +143,19 @@ export const TasksBoard = ({ setNavigation }) => {
           const proj = draftProj.find((el) => el.progressStatusId === source.droppableId);
           proj.tasks = items;
         });
+        dispatch(
+          UpdateProjectBoardProgressStatusTasks({
+            id: Number(
+              destination.droppableId.slice("statuses-".length, destination.droppableId.length),
+            ),
+            items: items.map((el, i) => ({
+              ...el,
+              taskId: Number(el.taskId.slice("task-".length, el.taskId.length)),
+              taskOrderNum: i,
+            })),
+          }),
+        );
+
         setState(updatedProject);
       } else {
         const result = move(
@@ -165,10 +171,61 @@ export const TasksBoard = ({ setNavigation }) => {
             }
           }
         });
+
+        const srcStatuses = {
+          ...updatedProject.find((el) => el.progressStatusId === source.droppableId),
+        };
+        const dstStatuses = {
+          ...updatedProject.find((el) => el.progressStatusId === destination.droppableId),
+        };
+        dispatch(
+          UpdateProjectBoardParts({
+            items: [
+              {
+                ...srcStatuses,
+                progressStatusId: Number(
+                  srcStatuses.progressStatusId.slice(
+                    "statuses-".length,
+                    srcStatuses.progressStatusId.length,
+                  ),
+                ),
+                tasks: srcStatuses.tasks.map((el) => ({
+                  ...el,
+                  taskId: Number(el.taskId.slice("task-".length, el.taskId.length)),
+                })),
+              },
+              {
+                ...dstStatuses,
+                progressStatusId: Number(
+                  dstStatuses.progressStatusId.slice(
+                    "statuses-".length,
+                    dstStatuses.progressStatusId.length,
+                  ),
+                ),
+                tasks: dstStatuses.tasks.map((el) => ({
+                  ...el,
+                  taskId: Number(el.taskId.slice("task-".length, el.taskId.length)),
+                })),
+              },
+            ],
+          }),
+        );
+
         setState(updatedProject);
       }
     } else {
       const updatedProject = reorder(state, source.index, destination.index);
+      dispatch(
+        UpdateProjectBoardProgressStatuses({
+          items: updatedProject.map((el, i) => ({
+            ...el,
+            progressStatusId: Number(
+              el.progressStatusId.slice("statuses-".length, el.progressStatusId.length),
+            ),
+            progressStatusOrderNum: i,
+          })),
+        }),
+      );
       setState(updatedProject);
     }
   };
@@ -195,16 +252,8 @@ export const TasksBoard = ({ setNavigation }) => {
   };
 
   const handleOnConfirmStatuses = (idStatuses) => {
-    // const updatedProject = produce(state, (draftProj) => {
-    //   const proj = draftProj.find((el) => el.progressStatusId === idStatuses);
-    //   if (proj.title) {
-    //     proj.confirmed = true;
-    //   }
-    // });
-    // console.log("hello");
     const obj = state.find((el) => el.progressStatusId === idStatuses);
     dispatch(createStatuses({ projectId: id, name: obj.title, orderNum: state.length }));
-    // setState(updatedProject);
     setIsAbleAddNew(true);
   };
 
@@ -218,10 +267,17 @@ export const TasksBoard = ({ setNavigation }) => {
   };
 
   const handleOnClickDetails = (id) => {
-    setShowDetails(true);
+    // setShowDetails(true);
   };
   const handleOnClickAccess = (id) => {
-    setShowAccess(true);
+    // setShowAccess(true);
+  };
+
+  const handleOnUpdateTask = (statusesId, taskId) => {
+    // setShowUpdate(true);
+    const tmpStatusesId = statusesId.slice("statuses-".length, statusesId.length);
+    const tmpTaskId = taskId.slice("task-".length, taskId.length);
+    history.replace(`/projects/${id}/board/statuses/${tmpStatusesId}/update_task/${tmpTaskId}`);
   };
 
   // const handleOnClickUpdate = () => {};
@@ -261,11 +317,6 @@ export const TasksBoard = ({ setNavigation }) => {
                               {statuses.confirmed ? (
                                 <div {...provided.dragHandleProps}>
                                   <p>{statuses.progressStatusName}</p>
-                                  <img
-                                    src={settingsSvg}
-                                    alt="update"
-                                    onClick={() => setShowUpdate(true)}
-                                  />
                                 </div>
                               ) : (
                                 <div>
@@ -311,6 +362,9 @@ export const TasksBoard = ({ setNavigation }) => {
                                             provided={provided}
                                             snapshot={snapshot}
                                             content={item.taskTitle}
+                                            taskId={item.taskId}
+                                            statusesId={statuses.progressStatusId}
+                                            handleOnUpdateTask={handleOnUpdateTask}
                                           />
                                         )}
                                       </Draggable>
@@ -344,22 +398,6 @@ export const TasksBoard = ({ setNavigation }) => {
           </Droppable>
         </DragDropContext>
       </div>
-      {(showDetails || showAccess || showUpdate || showCreateTask) && (
-        <Portal idNode="root">
-          {showDetails && (
-            <ProjectDetails setShowDetails={setShowDetails} idStatuses={idStatuses} id={id} />
-          )}
-          {showAccess && (
-            <ProjectAccess setShowAccess={setShowAccess} idStatuses={idStatuses} id={id} />
-          )}
-          {showUpdate && (
-            <UpdateTask setShowUpdate={setShowUpdate} idStatuses={idStatuses} id={id} />
-          )}
-          {showCreateTask && (
-            <CreateTask setShowCreate={setShowCreateTask} idStatuses={idStatuses} id={id} />
-          )}
-        </Portal>
-      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ const inititalState = {
   status: false,
   error: { error: {}, response: "", data: {} },
 };
+let updatedProject = null;
 
 const updateProjectBoard = (payload) => {
   const data = [...payload];
@@ -41,6 +42,69 @@ export default function reducer(state = inititalState, action) {
         error: action.payload,
       };
 
+    case `${types.deleteTask}_START`:
+      return {
+        ...state,
+        status: false,
+        error: { error: {}, response: "", data: {} },
+      };
+    case `${types.deleteTask}_SUCCESS`:
+      console.log(action.payload);
+      updatedProject = produce(state.projectBoard, (draftProj) => {
+        const statuses = draftProj.find(
+          (el) => el.progressStatusId === `statuses-${action.payload.statusesId}`,
+        );
+        statuses.tasks = statuses.tasks.filter(
+          (el) => el.taskId !== `task-${action.payload.taskId}`,
+        );
+        // const task = tasks.find((el) => el.taskId === `task-${action.payload.taskId}`);
+        // console.log(task);
+        // task.taskTitle = action.payload.title;
+        // task.description = action.payload.description;
+      });
+      // console.log(taskId, id, statusesId);
+      return {
+        ...state,
+        status: true,
+        projectBoard: updatedProject,
+        error: { error: {}, response: "", data: {} },
+      };
+    case `${types.deleteTask}_ERROR`:
+      return {
+        ...state,
+        status: false,
+        error: action.payload,
+      };
+
+    case `${types.updateTask}_START`:
+      return {
+        ...state,
+        status: false,
+        error: { error: {}, response: "", data: {} },
+      };
+    case `${types.updateTask}_SUCCESS`:
+      updatedProject = produce(state.projectBoard, (draftProj) => {
+        const tasks = draftProj.find(
+          (el) => el.progressStatusId === `statuses-${action.payload.progressStatusId}`,
+        ).tasks;
+        const task = tasks.find((el) => el.taskId === `task-${action.payload.id}`);
+        task.taskTitle = action.payload.title;
+        task.description = action.payload.description;
+      });
+
+      return {
+        ...state,
+        status: true,
+        projectBoard: updatedProject,
+        error: { error: {}, response: "", data: {} },
+      };
+    case `${types.updateTask}_ERROR`:
+      return {
+        ...state,
+        status: false,
+        error: action.payload,
+      };
+
     case `${types.createTask}_START`:
       return {
         ...state,
@@ -48,20 +112,22 @@ export default function reducer(state = inititalState, action) {
         error: { error: {}, response: "", data: {} },
       };
     case `${types.createTask}_SUCCESS`:
-      const updatedProject = produce(state.projectBoard, (draftProj) => {
-        const tasks = draftProj.find(
+      updatedProject = produce(state.projectBoard, (draftProj) => {
+        const statuses = draftProj.find(
           (el) => el.progressStatusId === `statuses-${action.payload.progressStatusId}`,
-        ).tasks;
-
-        tasks.push({
-          taskId: `task-${action.payload.taskId}`,
-          taskTitle: action.payload.title,
-          assigneeId: action.payload.assigneeId,
-          taskOrderNum: tasks.length,
-          assigneeLastname: "orlov",
-          assigneeAvatarURL: "",
-          assigneeFirstname: "lev",
-        });
+        );
+        statuses.tasks = [
+          {
+            taskId: `task-${action.payload.taskId}`,
+            taskTitle: action.payload.title,
+            assigneeId: action.payload.assigneeId,
+            taskOrderNum: statuses.tasks.length,
+            assigneeLastname: "orlov",
+            assigneeAvatarURL: "",
+            assigneeFirstname: "lev",
+          },
+          ...statuses.tasks,
+        ];
       });
 
       return {
@@ -146,9 +212,19 @@ export default function reducer(state = inititalState, action) {
         error: { error: {}, response: "", data: {} },
       };
     case `${types.UpdateProjectBoardProgressStatusTasks}_SUCCESS`:
+      // updatedProject = produce(state.projectBoard, (draftProj) => {
+      //   const statuses = draftProj.find(
+      //     (el) => el.progressStatusId === `statuses-${action.payload.id}`,
+      //   );
+      //   statuses.tasks = action.payload.items.map((el) => ({
+      //     ...el,
+      //     taskId: `task-${el.taskId}`,
+      //   }));
+      // });
       return {
         ...state,
         status: true,
+        // projectBoard: updatedProject,
         error: { error: {}, response: "", data: {} },
       };
     case `${types.UpdateProjectBoardProgressStatusTasks}_ERROR`:

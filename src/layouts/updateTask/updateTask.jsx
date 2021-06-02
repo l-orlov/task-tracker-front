@@ -1,32 +1,55 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
+import { useParams, useHistory } from "react-router-dom";
 
 import { Input } from "../../components/";
+import { updateTask, deleteTask } from "../../model/board/actions";
 
 import "./updateTask.scss";
 
 const taskFields = [
   { title: "title", name: "title", type: "text" },
   { title: "description", name: "description", type: "text" },
-  { title: "assignee", name: "assignee", type: "text" },
-  { title: "importance status", name: "iStatus", type: "text" },
-  { title: "progress status", name: "pStatus", type: "text" },
+  // { title: "assignee", name: "assignee", type: "text" },
+  // { title: "importance status", name: "iStatus", type: "text" },
+  // { title: "progress status", name: "pStatus", type: "text" },
 ];
 
-export const UpdateTask = ({ setShowUpdate }) => {
+export const UpdateTask = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const { register, handleSubmit } = useForm();
-  const handleOnCreate = (data) => {
-    console.log(data);
+  const { id, statusesId, taskId } = useParams();
+
+  const handleOnUpdate = (data) => {
+    dispatch(
+      updateTask({
+        "id": Number(taskId),
+        "projectId": Number(id),
+        "title": data.title,
+        "description": data.description,
+        "assigneeId": 2,
+        "importanceStatusId": 2,
+        "progressStatusId": Number(statusesId),
+      }),
+    );
+    history.push(`/projects/${id}/board`);
+    // setShowUpdate(false);
   };
   const handleOnCancel = () => {
-    console.log("cancel");
+    history.push(`/projects/${id}/board`);
+    // setShowUpdate(false);
+  };
+
+  const handleOnDelete = (e) => {
+    e.preventDefault();
+    dispatch(deleteTask({ taskId, id, statusesId }));
+    history.push(`/projects/${id}/board`);
   };
   return (
     <div className="updateTask">
-      <div>
-        <h2>Update Task</h2>
-        <p onClick={() => setShowUpdate(false)}>close</p>
-      </div>
+      <h2>Update Task</h2>
       <form>
         {taskFields.map((el) => (
           <Input
@@ -38,8 +61,9 @@ export const UpdateTask = ({ setShowUpdate }) => {
             type={el.type}
           />
         ))}
-        <button onClick={handleSubmit(handleOnCreate)}>create</button>
+        <button onClick={handleSubmit(handleOnUpdate)}>update</button>
         <button onClick={handleOnCancel}>cancel</button>
+        <button onClick={handleOnDelete}>delete</button>
       </form>
     </div>
   );

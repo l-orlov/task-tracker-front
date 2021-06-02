@@ -1,4 +1,5 @@
 import React from "react";
+import settingsSvg from "../svg/settings.svg";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: "none",
@@ -6,7 +7,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
-export const Task = ({ provided, snapshot, content }) => {
+export const Task = ({ provided, snapshot, content, handleOnUpdateTask, statusesId, taskId }) => {
   return (
     <div
       className="task"
@@ -15,7 +16,8 @@ export const Task = ({ provided, snapshot, content }) => {
       {...provided.dragHandleProps}
       style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
     >
-      {content}
+      <p>{content}</p>
+      <img src={settingsSvg} alt="update" onClick={() => handleOnUpdateTask(statusesId, taskId)} />
     </div>
   );
 };

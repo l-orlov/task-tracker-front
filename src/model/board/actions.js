@@ -14,7 +14,7 @@ export const getProjectBoardSuccess = (data) => ({
 export const getProjectBoardError = () => ({
   type: `${types.getProjectBoard}_ERROR`,
 });
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const createStatuses = (data) => ({
   type: `${types.createStatuses}`,
   payload: data,
@@ -30,7 +30,7 @@ export const createStatusesSuccess = (data) => ({
 export const createStatusesError = () => ({
   type: `${types.createStatuses}_ERROR`,
 });
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const createTask = (data) => ({
   type: `${types.createTask}`,
   payload: data,
@@ -46,8 +46,40 @@ export const createTaskSuccess = (data) => ({
 export const createTaskError = () => ({
   type: `${types.createTask}_ERROR`,
 });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const deleteTask = (data) => ({
+  type: `${types.deleteTask}`,
+  payload: data,
+});
 
-////////////////////////////////////////////////////UPDATE/////////////////////////////////////////////////////////////////////////////
+export const deleteTaskStart = () => ({
+  type: `${types.deleteTask}_START`,
+});
+export const deleteTaskSuccess = (data) => ({
+  type: `${types.deleteTask}_SUCCESS`,
+  payload: data,
+});
+export const deleteTaskError = () => ({
+  type: `${types.deleteTask}_ERROR`,
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const updateTask = (data) => ({
+  type: `${types.updateTask}`,
+  payload: data,
+});
+
+export const updateTaskStart = () => ({
+  type: `${types.updateTask}_START`,
+});
+export const updateTaskSuccess = (data) => ({
+  type: `${types.updateTask}_SUCCESS`,
+  payload: data,
+});
+export const updateTaskError = () => ({
+  type: `${types.updateTask}_ERROR`,
+});
+
+////////////////////////////////////////////////////UPDATE////////////////////////////////////////////////////////////////////
 
 export const UpdateProjectBoardParts = (data) => ({
   type: `${types.UpdateProjectBoardParts}`,
@@ -65,7 +97,7 @@ export const UpdateProjectBoardPartsError = (data) => ({
   type: `${types.UpdateProjectBoardParts}_ERROR`,
   payload: data,
 });
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const UpdateProjectBoardProgressStatuses = (data) => ({
   type: `${types.UpdateProjectBoardProgressStatuses}`,
@@ -83,7 +115,7 @@ export const UpdateProjectBoardProgressStatusesError = (data) => ({
   type: `${types.UpdateProjectBoardProgressStatuses}_ERROR`,
   payload: data,
 });
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const UpdateProjectBoardProgressStatusTasks = (data) => ({
   type: `${types.UpdateProjectBoardProgressStatusTasks}`,

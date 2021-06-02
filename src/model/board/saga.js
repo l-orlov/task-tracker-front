@@ -20,6 +20,12 @@ import {
   createTaskStart,
   createTaskSuccess,
   createTaskError,
+  updateTaskStart,
+  updateTaskSuccess,
+  updateTaskError,
+  deleteTaskStart,
+  deleteTaskSuccess,
+  deleteTaskError,
 } from "./actions";
 import { instance } from "../../utils/";
 
@@ -75,7 +81,6 @@ function* createStatuses(action) {
 }
 
 function* createTask(action) {
-  console.log(action.payload);
   yield put(createTaskStart());
   try {
     const response = yield call(() =>
@@ -100,13 +105,54 @@ function* createTask(action) {
   }
 }
 
-function* UpdateProjectBoardParts() {
+function* updateTask(action) {
+  yield put(updateTaskStart());
+  try {
+    yield call(() =>
+      instance.put(`${REACT_APP_BACKEND_URL}/api/v1/tasks/`, {
+        ...action.payload,
+      }),
+    );
+    yield put(
+      updateTaskSuccess({
+        ...action.payload,
+      }),
+    );
+  } catch (error) {
+    yield put(
+      updateTaskError({
+        response: error.response,
+        error: error,
+        data: error.response.data,
+      }),
+    );
+  }
+}
+
+function* deleteTask(action) {
+  const { taskId, statusesId } = action.payload;
+  yield put(deleteTaskStart());
+  try {
+    yield call(() => instance.delete(`${REACT_APP_BACKEND_URL}/api/v1/tasks/${taskId}`));
+    yield put(deleteTaskSuccess({ taskId, statusesId }));
+  } catch (error) {
+    yield put(
+      deleteTaskError({
+        response: error.response,
+        error: error,
+        data: error.response.data,
+      }),
+    );
+  }
+}
+
+function* UpdateProjectBoardParts(action) {
+  const { items } = action.payload;
+  console.log(items);
   yield put(UpdateProjectBoardPartsStart());
   try {
-    const response = yield call(() =>
-      instance.get(`${REACT_APP_BACKEND_URL}/api/v1/projects/to-user`),
-    );
-    yield put(UpdateProjectBoardPartsSuccess(response.data));
+    yield call(() => instance.put(`${REACT_APP_BACKEND_URL}/api/v1/project-board/parts`, items));
+    yield put(UpdateProjectBoardPartsSuccess(items));
   } catch (error) {
     yield put(
       UpdateProjectBoardPartsError({
@@ -117,13 +163,12 @@ function* UpdateProjectBoardParts() {
     );
   }
 }
-function* UpdateProjectBoardProgressStatuses() {
+function* UpdateProjectBoardProgressStatuses(action) {
+  const { items } = action.payload;
   yield put(UpdateProjectBoardProgressStatusesStart());
   try {
-    const response = yield call(() =>
-      instance.get(`${REACT_APP_BACKEND_URL}/api/v1/projects/to-user`),
-    );
-    yield put(UpdateProjectBoardProgressStatusesSuccess(response.data));
+    yield call(() => instance.put(`${REACT_APP_BACKEND_URL}/api/v1/project-board/statuses`, items));
+    yield put(UpdateProjectBoardProgressStatusesSuccess(items));
   } catch (error) {
     yield put(
       UpdateProjectBoardProgressStatusesError({
@@ -134,13 +179,17 @@ function* UpdateProjectBoardProgressStatuses() {
     );
   }
 }
-function* UpdateProjectBoardProgressStatusTasks() {
+function* UpdateProjectBoardProgressStatusTasks(action) {
+  // console.log(action.payload);
+  const { id, items } = action.payload;
+  // console.log(id, items);
   yield put(UpdateProjectBoardProgressStatusTasksStart());
   try {
-    const response = yield call(() =>
-      instance.get(`${REACT_APP_BACKEND_URL}/api/v1/projects/to-user`),
+    yield call(() =>
+      instance.put(`${REACT_APP_BACKEND_URL}/api/v1/project-board/status-tasks`, items),
     );
-    yield put(UpdateProjectBoardProgressStatusTasksSuccess(response.data));
+    // console.log("hello");
+    yield put(UpdateProjectBoardProgressStatusTasksSuccess({ id, items }));
   } catch (error) {
     yield put(
       UpdateProjectBoardProgressStatusTasksError({
@@ -155,6 +204,8 @@ function* UpdateProjectBoardProgressStatusTasks() {
 export default function* watchProjectBoard() {
   yield takeEvery(types.getProjectBoard, getProjectBoard);
   yield takeEvery(types.createTask, createTask);
+  yield takeEvery(types.updateTask, updateTask);
+  yield takeEvery(types.deleteTask, deleteTask);
   yield takeEvery(types.createStatuses, createStatuses);
   yield takeEvery(types.UpdateProjectBoardParts, UpdateProjectBoardParts);
   yield takeEvery(types.UpdateProjectBoardProgressStatuses, UpdateProjectBoardProgressStatuses);

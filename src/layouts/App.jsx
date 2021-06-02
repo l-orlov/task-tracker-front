@@ -3,6 +3,9 @@ import { Switch, Route, useRouteMatch, NavLink } from "react-router-dom";
 
 import { TasksBoard } from "./tasksBoard/";
 import { Projects } from "./projects";
+import { Portal } from "../components/portal/";
+import { CreateTask } from "./createTask/";
+import { UpdateTask } from "./updateTask/";
 
 import "./App.scss";
 import logoSvg from "../logo.svg";
@@ -61,19 +64,46 @@ export const App = () => {
       <div className="app-body">
         <Navigation navigation={navigation} />
         <div className="app-content">
-          <Switch>
-            <Route
-              exact
-              path={`${path}/`}
-              render={() => <Projects setNavigation={setNavigation} />}
-            />
-            <Route
-              path={`${path}/:id/board`}
-              render={() => <TasksBoard setNavigation={setNavigation} />}
-            />
-          </Switch>
+          <Route
+            exact
+            path={`${path}/`}
+            render={() => <Projects setNavigation={setNavigation} />}
+          />
+          <Route
+            path={`${path}/:id/board`}
+            render={() => <TasksBoard setNavigation={setNavigation} />}
+          />
+          <Route
+            path={`${path}/:id/board/statuses/:statusesId/create_task`}
+            render={() => (
+              <Portal idNode="root">
+                <CreateTask />
+              </Portal>
+            )}
+          />
+          <Route
+            path={`${path}/:id/board/statuses/:statusesId/update_task/:taskId`}
+            render={() => (
+              <Portal idNode="root">
+                <UpdateTask />
+              </Portal>
+            )}
+          />
         </div>
       </div>
     </div>
   );
 };
+{
+  /* <Portal idNode="root">
+{showDetails && (
+  <ProjectDetails setShowDetails={setShowDetails} idStatuses={idStatuses} id={id} />
+)}
+{showAccess && (
+  <ProjectAccess setShowAccess={setShowAccess} idStatuses={idStatuses} id={id} />
+)}
+{showUpdate && (
+  <UpdateTask setShowUpdate={setShowUpdate} idStatuses={idStatuses} id={id} />
+)}
+</Portal> */
+}

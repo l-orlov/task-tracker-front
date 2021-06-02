@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
+import { useParams, useHistory } from "react-router-dom";
 
 import { createTask } from "../../model/board/actions";
 
@@ -16,9 +17,11 @@ const taskFields = [
   // { title: "progress status", name: "pStatus", type: "text" },
 ];
 
-export const CreateTask = ({ setShowCreate, idStatuses, id }) => {
+export const CreateTask = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { register, handleSubmit } = useForm();
+  const { id, statusesId } = useParams();
 
   const handleOnCreate = (data) => {
     dispatch(
@@ -28,13 +31,13 @@ export const CreateTask = ({ setShowCreate, idStatuses, id }) => {
         "description": data.description,
         "assigneeId": 1,
         "importanceStatusId": 2,
-        "progressStatusId": Number(idStatuses.slice("statuses-".length, idStatuses.length)),
+        "progressStatusId": Number(statusesId),
       }),
     );
-    setShowCreate(false);
+    history.push(`/projects/${id}/board`);
   };
   const handleOnCancel = () => {
-    setShowCreate(false);
+    history.push(`/projects/${id}/board`);
   };
   return (
     <div className="createTask">
